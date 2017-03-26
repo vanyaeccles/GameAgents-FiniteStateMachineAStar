@@ -18,10 +18,10 @@ public class Sheriff : MonoBehaviour
     public int MoneyInBank = 0;
     public int Thirst = 0;
     public int Fatigue = 0;
-    public int bullets = 0;
+    public int bullets = 5;
     public int restedness = 0;
     private int sleepThreshold;
-
+    private float sightPerceptiveness;
 
     public static int WAIT_TIME = 5;
     public int waitedTime = 0;
@@ -42,6 +42,7 @@ public class Sheriff : MonoBehaviour
         this.stateMachine = new StateMachine<Sheriff>();
 
         sleepThreshold = Random.Range(40, 150);
+        sightPerceptiveness = 20.0f;
 
         sheriffGrid = GameObject.Find("GameManager").GetComponent<Grid>();
 
@@ -54,6 +55,22 @@ public class Sheriff : MonoBehaviour
         Go(sheriffGrid.saloonPos);
         this.stateMachine.Init(this, DrinkAtTheSaloon.Instance, SheriffGlobalState.Instance);
     }
+
+    public void Update()
+    {
+        Thirst++;
+        this.stateMachine.Update();
+        LookAhead();
+
+        if (sightPerceptiveness < 20.0f && sightPerceptiveness > 0.0f)
+        {
+            if (sheriffGrid.isDayTime)
+                sightPerceptiveness += 0.5f;
+            else if (!sheriffGrid.isDayTime)
+                sightPerceptiveness -= 0.5f;
+        } 
+    }
+
 
     public bool Thirsty()
     {
@@ -85,6 +102,8 @@ public class Sheriff : MonoBehaviour
     public void DrinkWhisky()
     {
         GoldCarried--;
+        if (sightPerceptiveness > 5.0f)
+            sightPerceptiveness -= 1.0f;
     }
 
     public bool OutofMoney()
@@ -93,6 +112,41 @@ public class Sheriff : MonoBehaviour
             return true;
         else
             return false;
+    }
+
+    public void LookAhead()
+    {
+        RaycastHit[] hits;
+        hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.distance <= sightPerceptiveness)
+            {
+                if (hit.collider.tag == "Jesse")
+                {
+                    Debug.LogError("Sheriff: There's that dirty scoundrel Jesse!");
+                    if (bullets > 0)
+                        TakeAimAndFire();
+                }
+            }
+        }
+    }
+
+    public void TakeAimAndFire()
+    {
+        bullets--;
+
+        int hitJesse = Random.Range(3, 20);
+
+        if (hitJesse > 10)
+        {
+            GameObject.Find("Jesse").SendMessage("getShotDead");
+
+            Debug.LogError("Sheriff: Got that yella belly!");
+        }
+
+        else Debug.Log("Sheriff: Darnit I missed him!");
     }
 
     public Vector3 ChooseRandomLocation()
@@ -116,11 +170,7 @@ public class Sheriff : MonoBehaviour
         this.stateMachine.RevertToPreviousState();
     }
 
-    public void Update()
-    {
-        Thirst++;
-        this.stateMachine.Update();
-    }
+    
 
 
     #region MOVEMENT+PATHFINDING
@@ -200,6 +250,9 @@ public class Sheriff : MonoBehaviour
     public void Snooze()
     {
         restedness++;
+
+        if(sightPerceptiveness < 20.0f)
+            sightPerceptiveness += 1.0f;
     }
 
     public bool SleptLongEnough()
@@ -213,7 +266,8 @@ public class Sheriff : MonoBehaviour
     {
         ChangeLocation(Locations.jailhouse);
         GoldCarried += Random.Range(40, 100);
-        Debug.Log("Sheriff: Got me s'more cash from the safe");
+        GetMoreAmmo();
+        Debug.Log("Sheriff: Got me s'more cash and ammo from the safe");
     }
 
     public void SheriffAtSaloon()

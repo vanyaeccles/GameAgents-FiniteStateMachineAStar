@@ -88,7 +88,7 @@ public class Outlaw : MonoBehaviour
 
     public bool checkLuck()
     {
-        Debug.Log("Checking");
+        //Debug.Log("Checking");
         int luck = Random.Range(0, 10);
 
         if (luck < 7) return false;

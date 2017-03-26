@@ -50,6 +50,7 @@ public sealed class FixRobot : State<Undertaker>
             {
                 Debug.Log("Undertaker: Just needs a new robot heart");
                 GameObject.Find("Jesse").SendMessage("JesseIsFixed");
+                agent.isWithRobot = false;
                 agent.ChangeState(TinkerWithRobots.Instance);
             }
         }

@@ -24,7 +24,7 @@ public sealed class OnPatrol : State<Sheriff>
 
     public override void Enter(Sheriff agent)
     {
-        agent.ChangeLocation(Locations.moving);
+        //agent.ChangeLocation(Locations.moving);
 
         Debug.Log("Sheriff: Going on patrol!");
 
@@ -45,6 +45,7 @@ public sealed class OnPatrol : State<Sheriff>
         if (!agent.isAtALocation)
         {
             Debug.Log("Sheriff: On patrol!");
+            //agent.LookAhead();
         }
 
         ////Checks if the agent is at their destination
@@ -52,10 +53,13 @@ public sealed class OnPatrol : State<Sheriff>
         {
             Debug.Log("Sheriff: What have we here?");
 
-            if(!agent.InspectLocation())
+            //agent.LookAhead();
+
+            if (!agent.InspectLocation())
             {
                 Debug.Log("Sheriff: Nothing seems outta the order here");
 
+                agent.isAtALocation = false;
                 agent.Go(agent.sheriffGrid.jailhousePos);
                 agent.ChangeState(SleepOnTheJob.Instance);
             }

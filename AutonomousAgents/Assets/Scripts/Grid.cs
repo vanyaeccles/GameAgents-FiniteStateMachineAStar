@@ -28,7 +28,9 @@ public class Grid : MonoBehaviour{
 
 
     public bool displayGridGizmos;
-   
+
+    public Transform lightTransform;
+    public bool isDayTime;
 
     public LayerMask unwalkableMask; 
     public Vector2 gridWorldSize;
@@ -85,6 +87,13 @@ public class Grid : MonoBehaviour{
     #endregion
 
 
+    void Update()
+    {
+        if (lightTransform.position.y < 0.0f)
+            isDayTime = false;
+
+        else isDayTime = true;
+    }
 
 
     void Awake()

@@ -64,6 +64,7 @@ public class Grid : MonoBehaviour{
     public GameObject cemetery;
     public GameObject outlawCamp;
     public GameObject prairie;
+    public GameObject workshop;
 
     public Vector3 lakePos;
     public Vector3 housePos;
@@ -74,7 +75,9 @@ public class Grid : MonoBehaviour{
     public Vector3 saloonPos;
     public Vector3 outlawCampPos;
     public Vector3 prairiePos;
-    
+    public Vector3 workshopPos;
+
+    public List<Vector3> locationPositions;
 
     public GameObject[] mountains;
     public GameObject[] trees;
@@ -86,7 +89,7 @@ public class Grid : MonoBehaviour{
 
     void Awake()
     {
-
+        locationPositions = new List<Vector3>();
 
         nodeDiameter = nodeRadius * 2;
 
@@ -129,6 +132,7 @@ public class Grid : MonoBehaviour{
             }
     }
 
+
     //Gives an object a random position on the grid
     Vector3 RandomPosition()
     {
@@ -163,6 +167,20 @@ public class Grid : MonoBehaviour{
         saloonPos = RandomPosition();
         outlawCampPos = RandomPosition();
         prairiePos = RandomPosition();
+        workshopPos = RandomPosition();
+
+        lakePos = RandomPosition();
+
+
+
+        //Add the locations to a List for the sheriff, doesn't need the outlawcamp, the jailhouse or the secret workshop
+        locationPositions.Add(housePos);
+        locationPositions.Add(goldminePos);
+        //locationPositions.Add(jailhousePos);
+        locationPositions.Add(cemeteryPos);
+        locationPositions.Add(saloonPos);
+        //locationPositions.Add(outlawCampPos); 
+        locationPositions.Add(prairiePos);
 
 
         Instantiate(house, housePos, Quaternion.identity);
@@ -171,8 +189,10 @@ public class Grid : MonoBehaviour{
         Instantiate(jailhouse, jailhousePos, Quaternion.identity);
         Instantiate(saloon, saloonPos, Quaternion.identity);
         Instantiate(cemetery, cemeteryPos, Quaternion.identity);
-        Instantiate(outlawCamp, outlawCampPos, Quaternion.identity);
+        Instantiate(outlawCamp, outlawCampPos, Quaternion.Euler(45, 0, 0));
         Instantiate(prairie, prairiePos, Quaternion.identity);
+        Instantiate(lake, lakePos, Quaternion.identity);
+        Instantiate(workshop, workshopPos, Quaternion.identity);
 
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class OutlawCampCollision : MonoBehaviour {
 
-    void OnCollisionEnter(Collision c)
+    void OnTriggerEnter(Collider c)
     {
         //Debug.Log("Collision");
 

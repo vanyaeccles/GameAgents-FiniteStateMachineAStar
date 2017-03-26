@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HouseCollision : MonoBehaviour {
 
-    void OnCollisionEnter(Collision c)
+    void OnTriggerEnter(Collider c)
     {
         //Debug.Log("Collision");
 
@@ -19,5 +19,9 @@ public class HouseCollision : MonoBehaviour {
             GameObject.Find("Elsa").SendMessage("ElsaAtHouse");
         }
 
+        if (c.gameObject.tag == "Sheriff")
+        {
+            GameObject.Find("Sheriff").SendMessage("AtLocation");
+        }
     }
 }

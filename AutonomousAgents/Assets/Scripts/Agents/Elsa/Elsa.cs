@@ -25,7 +25,7 @@ public class Elsa : MonoBehaviour
     public int createdTime = 0;
 
     // AStar details
-    //private AStarPathfinder bobLocManager;
+    //private AStarPathfinder elsaLocManager;
     private Transform destination; // The position of the destination target
     float speed = 10; // Speed of the agent's movement
     Vector3[] path; // A vector3 array containing the nodes in the path
@@ -136,14 +136,14 @@ public class Elsa : MonoBehaviour
     }
 
 
-    //Draws a gizmo cube for each waypoint on the path, with lines connecting them, blue for bob
+    //Draws a gizmo cube for each waypoint on the path, with lines connecting them, green for Elsa
     public void OnDrawGizmos()
     {
         if (path != null)
         {
             for (int i = targetIndex; i < path.Length; i++)
             {
-                Gizmos.color = Color.blue;
+                Gizmos.color = Color.green;
                 Gizmos.DrawCube(path[i], Vector3.one);
 
                 if (i == targetIndex)

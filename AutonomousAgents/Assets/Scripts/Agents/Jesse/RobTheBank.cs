@@ -49,6 +49,7 @@ public sealed class RobTheBank : State<Outlaw>
 
 
             bool lucky = agent.checkLuck();
+
             if (!lucky)
             {
 

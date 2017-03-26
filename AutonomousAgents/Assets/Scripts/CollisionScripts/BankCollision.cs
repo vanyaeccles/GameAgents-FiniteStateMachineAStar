@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BankCollision : MonoBehaviour {
 
-    void OnCollisionEnter(Collision c)
+    void OnTriggerEnter(Collider c)
     {
         //Debug.Log("Collision");
 
@@ -17,6 +17,11 @@ public class BankCollision : MonoBehaviour {
         if (c.gameObject.tag == "Jesse")
         {
             GameObject.Find("Jesse").SendMessage("JesseAtBank");
+        }
+
+        if (c.gameObject.tag == "Sheriff")
+        {
+            GameObject.Find("Sheriff").SendMessage("AtLocation");
         }
 
     }

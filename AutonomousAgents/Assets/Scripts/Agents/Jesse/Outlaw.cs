@@ -35,6 +35,12 @@ public class Outlaw : MonoBehaviour
     public delegate void bankRobbery();
     public static event bankRobbery OnBankRobbery;
 
+    //create death event
+    public delegate void jesseDead();
+    public static event jesseDead OnJesseDead;
+    public bool isDead;
+    private CapsuleCollider jesseCol;
+
     // AStar details
     //private AStarPathfinder bobLocManager;
     private Transform destination; // The position of the destination target
@@ -53,6 +59,8 @@ public class Outlaw : MonoBehaviour
         
         this.JAIL_SENTANCE = Random.Range(70, 120);
         this.WAIT_TIME = Random.Range(20, 50);
+
+        this.jesseCol = GetComponent<CapsuleCollider>();
 
 
         jesseGrid = GameObject.Find("GameManager").GetComponent<Grid>();
@@ -80,6 +88,7 @@ public class Outlaw : MonoBehaviour
 
     public bool checkLuck()
     {
+        Debug.Log("Checking");
         int luck = Random.Range(0, 10);
 
         if (luck < 7) return false;
@@ -89,10 +98,53 @@ public class Outlaw : MonoBehaviour
 
    public void robBank()
     {
-        OnBankRobbery();
+        //Note that if there is no Bob instanciated, Jesse will be stuck in the bank
+        //OnBankRobbery();
         StealSomeGold();
     }
 
+    public void getShotDead()
+    {
+        isDead = true;
+        StopCoroutine("FollowPath");
+
+        this.transform.rotation = Quaternion.AngleAxis(90, Vector3.left);
+        jesseCol.radius = 4.0f;
+
+        //Note that if there is no undertaker instanciated, Jesse will be stuck
+        OnJesseDead();
+        ChangeState(InNeedOfRepair.Instance);
+    }
+
+    void OnTriggerEnter(Collider c)
+    {
+        //Debug.Log("Jesse Collide");
+        if (c.gameObject.tag == "Undertaker")
+        {
+            //Debug.Log("Undertaker Collide");
+            if(isDead)
+            {
+                GameObject.Find("Undertaker").SendMessage("UndertakerAtRobot");
+            }    
+        }
+    }
+
+    public void JesseIsFixed()
+    {
+        isDead = false;
+
+        this.transform.rotation = Quaternion.AngleAxis(0, Vector3.left);
+        jesseCol.radius = 0.5f;
+
+        Go(jesseGrid.outlawCampPos);
+        ChangeState(LurkAndPlot.Instance);
+    }
+
+    public void Drag()
+    {
+        if(isDead)
+            this.transform.position = GameObject.Find("Undertaker").GetComponent<Transform>().position;
+    }
 
     public bool RichEnough()
     {
@@ -155,13 +207,17 @@ public class Outlaw : MonoBehaviour
     {
         Thirst++;
         this.stateMachine.Update();
+
+        //For debugging the undertaker behaviour
+        if (Input.GetKeyDown("space"))
+            getShotDead();
     }
 
     #region MOVEMENT+PATHFINDING
 
     public void Go(Vector3 _destination)
     {
-        //Debug.Log("Bob is Going");
+        //Debug.Log("Jesse is Going");
         PathRequestManager.RequestPath(transform.position, _destination, OnPathFound);
     }
 
@@ -207,7 +263,7 @@ public class Outlaw : MonoBehaviour
         {
             for (int i = targetIndex; i < path.Length; i++)
             {
-                Gizmos.color = Color.blue;
+                Gizmos.color = Color.red;
                 Gizmos.DrawCube(path[i], Vector3.one);
 
                 if (i == targetIndex)

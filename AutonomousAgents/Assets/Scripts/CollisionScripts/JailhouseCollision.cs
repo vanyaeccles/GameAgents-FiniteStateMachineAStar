@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class JailhouseCollision : MonoBehaviour {
 
-    void OnCollisionEnter(Collision c)
+    void OnTriggerEnter(Collider c)
     {
         //Debug.Log("Collision");
 
@@ -13,5 +13,9 @@ public class JailhouseCollision : MonoBehaviour {
             GameObject.Find("Jesse").SendMessage("JesseAtJailHouse");
         }
 
+        if (c.gameObject.tag == "Sheriff")
+        {
+            GameObject.Find("Sheriff").SendMessage("SheriffAtJailHouse");
+        }
     }
 }

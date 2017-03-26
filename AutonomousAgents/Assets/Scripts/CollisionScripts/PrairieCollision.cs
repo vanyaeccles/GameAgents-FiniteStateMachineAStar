@@ -4,13 +4,18 @@ using UnityEngine;
 
 public class PrairieCollision : MonoBehaviour {
 
-    void OnCollisionEnter(Collision c)
+    void OnTriggerEnter(Collider c)
     {
         Debug.Log("Prairie Collision");
 
         if (c.gameObject.tag == "Elsa")
         {
             GameObject.Find("Elsa").SendMessage("ElsaAtPrairie");
+        }
+
+        if (c.gameObject.tag == "Sheriff")
+        {
+            GameObject.Find("Sheriff").SendMessage("AtLocation");
         }
     }
 }

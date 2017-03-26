@@ -50,7 +50,7 @@ public sealed class LurkAndPlot : State<Outlaw>
             }
             else if (agent.WaitedLongEnough() && agent.missingSal >= 5)
             {
-                agent.Go(agent.jesseGrid.bankPos);
+                agent.Go(agent.jesseGrid.cemeteryPos);
                 agent.ChangeState(VisitCemetery.Instance);
             }
         }

@@ -2,25 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/*
+ *  This class defines the agent Undertaker
+ */
+
 public class Undertaker : MonoBehaviour
 {
     private StateMachine<Undertaker> stateMachine;
-    public Grid undertakerGrid;
-
-
-    public Locations Location = Locations.robotWorkshop;
-    public int Thirst = 0;
-
-    public Transform brokenRobotPos;
-    public bool isWithRobot = false;
 
     // AStar details
     private Transform destination; // The position of the destination target
-    float speed = 10; // Speed of the agent's movement
+    const float speed = 10; // Speed of the agent's movement
     Vector3[] path; // A vector3 array containing the nodes in the path
     int targetIndex;
 
+    public Locations Location = Locations.robotWorkshop;
+    public Grid undertakerGrid;
 
+
+    public int Thirst = 0;
+    public Transform brokenRobotPos;
+    public bool isWithRobot = false;
+
+    
+
+
+    #region STATE MACHINE + BASIC AGENT METHODS
 
     public void Awake()
     {
@@ -38,26 +46,6 @@ public class Undertaker : MonoBehaviour
     {
         Go(undertakerGrid.workshopPos);
         this.stateMachine.Init(this, TinkerWithRobots.Instance, UndertakerGlobalState.Instance);
-    }
-
-    public bool Thirsty()
-    {
-        bool thirsty = Thirst == 40 ? true : false;
-        return thirsty;
-    }
-
-    public void handlerJesseBroken()
-    {
-        Debug.Log("Undertaker: Ah the t1000 is in need of repair");
-
-        brokenRobotPos = GameObject.Find("Jesse").GetComponent<Transform>();
-        Go(brokenRobotPos.position);
-        ChangeState(FixRobot.Instance);
-    }
-
-    public void DragRobot()
-    {
-        GameObject.Find("Jesse").SendMessage("Drag");
     }
 
     public void ChangeLocation(Locations l)
@@ -80,6 +68,38 @@ public class Undertaker : MonoBehaviour
         Thirst++;
         this.stateMachine.Update();
     }
+
+    #endregion
+
+
+    #region STATE CHECKS
+
+    public bool Thirsty()
+    {
+        bool thirsty = Thirst == 40 ? true : false;
+        return thirsty;
+    }
+
+    #endregion
+
+
+
+
+    public void handlerJesseBroken()
+    {
+        Debug.Log("Undertaker: Ah the t1000 is in need of repair");
+
+        brokenRobotPos = GameObject.Find("Jesse").GetComponent<Transform>();
+        Go(brokenRobotPos.position);
+        ChangeState(FixRobot.Instance);
+    }
+
+    public void DragRobot()
+    {
+        GameObject.Find("Jesse").SendMessage("Drag");
+    }
+
+    
 
 
     #region MOVEMENT+PATHFINDING

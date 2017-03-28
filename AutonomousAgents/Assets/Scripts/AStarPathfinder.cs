@@ -6,14 +6,13 @@ using System;
 
 /*
  *  This class defines the AStar pathfinder
- * 
  */
 
 public class AStarPathfinder : MonoBehaviour {
 
     
-    PathRequestManager requestManager;
-    Grid grid;
+    PathRequestManager requestManager; // This handles getting and receiving paths from the AStar algorithm
+    Grid grid; // A copy of the grid
 
 
     void Awake()
@@ -35,37 +34,33 @@ public class AStarPathfinder : MonoBehaviour {
     // Returns the path as a Vector3 array
     IEnumerator FindAstarPath(Vector3 startPos, Vector3 targetPos)
     {
-        //Stopwatch sw = new Stopwatch();
-        //sw.Start();
-
-        Vector3[] pathWaypoints = new Vector3[0];
-
+        Vector3[] pathWaypoints = new Vector3[0]; // The returned path
         bool isPathFound = false;
 
+        Node startNode = grid.GetNodeFromWorldPos(startPos);   // The node we start with (converted from world coords)
+        Node targetNode = grid.GetNodeFromWorldPos(targetPos); // Node we want to get to (converted from world coords)
 
-        Node startNode = grid.GetNodeFromWorldPos(startPos);
-        Node targetNode = grid.GetNodeFromWorldPos(targetPos);
 
-        
-        //Check that the path is walkable
+        //Check that the start and target are both walkable
         if (startNode.isWalkable && targetNode.isWalkable)
         {
 
             //List to hold the OPEN node set
             List<Node> openSet = new List<Node>();
+
             //HashSet to hold the CLOSED node set
             HashSet<Node> closedSet = new HashSet<Node>();
 
+            //Begin with the startNode
             openSet.Add(startNode);
 
 
-            //Begin the loop
+            //Begin the loop to find the path
             while(openSet.Count > 0)
             {
-
-
                 //Get node in the OPEN  set with lowest f-cost, set it to current node
                 Node currentN = openSet[0];
+
                 for (int i = 1; i < openSet.Count; i++)
                 {
                     if (openSet[i].fCost < currentN.fCost || openSet[i].fCost == currentN.fCost)
@@ -76,6 +71,8 @@ public class AStarPathfinder : MonoBehaviour {
                 }
 
                 openSet.Remove(currentN);
+
+
                 closedSet.Add(currentN);
 
 
@@ -90,8 +87,7 @@ public class AStarPathfinder : MonoBehaviour {
                 }
 
 
-
-
+                // Go through the neighbours and 
                 foreach (Node neighbour in grid.GetNodeNeighbours(currentN))
                 {
                     //If neighbour is not traversable or in the CLOSED set, skip to next neighbour
@@ -102,6 +98,8 @@ public class AStarPathfinder : MonoBehaviour {
 
                 
                     int newCostToNeighbour = currentN.gCost + GetNode2NodeDistance(currentN, neighbour) + neighbour.movementCost;
+
+                    // if the neighbour has a lesser cost and isn't already in the open set, set the cost and parent and add to open set
                     if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
                     {
                         // Set the g+h cost and parent of the neighbour node
@@ -115,9 +113,12 @@ public class AStarPathfinder : MonoBehaviour {
                         //else //if its already in the openset its value has changed
                             //openSet.UpdateItem(neighbour);
                     }
-            }
+                }
+
+
+            }//End of loop, path is found
         }
-        }
+
         //wait for a frame before returning
         yield return null;
 
@@ -127,6 +128,7 @@ public class AStarPathfinder : MonoBehaviour {
             pathWaypoints = RetracePath(startNode, targetNode);
         }
 
+        // Gives the path back to the request manager, will return an empty path if no path was found
         requestManager.CurrentPathFound(pathWaypoints, isPathFound);
     }
 
@@ -175,19 +177,24 @@ public class AStarPathfinder : MonoBehaviour {
 
 
 
-    //Gets the distance between Nodes
+    //Gets the distance between Nodes, returned distance is scaled up by 10 (sqrt(2) is 1.4, hence diagonal is 14 per unit distance)
     int GetNode2NodeDistance(Node nodeA, Node nodeB)
     {
         int xDistance = Mathf.Abs(nodeA.gridX - nodeB.gridX);
         int yDistance = Mathf.Abs(nodeA.gridY - nodeB.gridY);
 
-        // @TODO
+        int distance;
+
         if (xDistance > yDistance)
         {
-            return 14 * yDistance + 10 * (xDistance - yDistance);
+            distance = 14 * yDistance + 10 * (xDistance - yDistance); 
         }
-            
-        return 14 * xDistance + 10 * (yDistance - xDistance);
+        else
+        {
+            distance = 14 * xDistance + 10 * (yDistance - xDistance);
+        }
+
+        return distance; 
     }
 
 }

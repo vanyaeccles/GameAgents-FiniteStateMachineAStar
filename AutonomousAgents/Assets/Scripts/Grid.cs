@@ -123,7 +123,7 @@ public class Grid : MonoBehaviour{
         CreateGrid();
     }
 
-
+    // This function creates positions where we can spawn locations (buildings, trees etc)
     void createWorldPositions()
     {
         worldLocationPositions.Clear();
@@ -142,7 +142,7 @@ public class Grid : MonoBehaviour{
     }
 
 
-    //Gives an object a random position on the grid
+    //Gives an object a random position on the grid, using places in world location positions
     Vector3 RandomPosition()
     {
         int randomIndex = Random.Range(0, worldLocationPositions.Count);
@@ -152,6 +152,7 @@ public class Grid : MonoBehaviour{
     }
 
 
+    // Spawns the locations at random positions in the world
     public void SpawnLocations()
     {
         createWorldPositions();
@@ -198,14 +199,14 @@ public class Grid : MonoBehaviour{
         Instantiate(jailhouse, jailhousePos, Quaternion.identity);
         Instantiate(saloon, saloonPos, Quaternion.identity);
         Instantiate(cemetery, cemeteryPos, Quaternion.identity);
-        Instantiate(outlawCamp, outlawCampPos, Quaternion.Euler(45, 0, 0));
+        Instantiate(outlawCamp, outlawCampPos, Quaternion.Euler(45, 0, 0)); // I rotate the cuboid to make it look like a tent
         Instantiate(prairie, prairiePos, Quaternion.identity);
         Instantiate(lake, lakePos, Quaternion.identity);
         Instantiate(workshop, workshopPos, Quaternion.identity);
 
     }
 
-
+    // Creates the Grid for Astar, also determines if locations are walkable and gets their movement cost
     void CreateGrid()
     {
         grid = new Node[gridSizeX, gridSizeY];
@@ -222,7 +223,7 @@ public class Grid : MonoBehaviour{
 
                 int movementCost = 0;
 
-                //raycast code
+                //Uses a raycast to determine the movement cost of locations
                 if(isWalkable)
                 {
                     Ray ray = new Ray(worldPoint + Vector3.up * 45, Vector3.down);
@@ -297,7 +298,7 @@ public class Grid : MonoBehaviour{
 
 
 
-    // Visualises the nodes
+    // Visualises the nodes as white if walkable, red if not
     void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));

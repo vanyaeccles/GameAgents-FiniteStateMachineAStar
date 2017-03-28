@@ -2,20 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
+/*
+ *  This class defines the agent Bob
+ */
 
 public class Bob : MonoBehaviour {
 
 	private StateMachine<Bob> stateMachine;
-    
+
+
+    // AStar details
+    //private AStarPathfinder bobLocManager;
+    private Transform destination; // The position of the destination target
+    const float speed = 10; // Speed of the agent's movement
+    Vector3[] path; // A vector3 array containing the nodes in the path
+    int targetIndex;
 
     public Locations Location = Locations.goldmine;
     public Grid bobGrid;
     
 
-    //public Vector3 bobPos;
-    public Transform bobTransform;
+    //public Transform bobTransform;
 
 
 
@@ -23,21 +30,15 @@ public class Bob : MonoBehaviour {
     public int MoneyInBank = 0;
     public int Thirst = 0;
     public int Fatigue = 0;
-
     public static int WAIT_TIME = 5;
     public int waitedTime = 0;
     public int createdTime = 0;
 
 
-    // AStar details
-    //private AStarPathfinder bobLocManager;
-    private Transform destination; // The position of the destination target
-    float speed = 10; // Speed of the agent's movement
-    Vector3[] path; // A vector3 array containing the nodes in the path
-    int targetIndex;
+    
 
 
-    // public Vector3 bobPos;
+    #region STATE MACHINE + BASIC AGENT METHODS
 
     public void Awake () {
         Debug.Log("Bob is waking up...");
@@ -57,27 +58,43 @@ public class Bob : MonoBehaviour {
         this.stateMachine.Init(this, EnterMineAndDigForNuggets.Instance, BobGlobalState.Instance);
     }
 
+    public void ChangeState(State<Bob> state)
+    {
+        this.stateMachine.ChangeState(state);
+    }
 
+    public void RevertToPreviousState()
+    {
+        this.stateMachine.RevertToPreviousState();
+    }
+
+    public void Update()
+    {
+        Thirst++;
+        this.stateMachine.Update();
+
+
+        //updateSpriteLocation();
+
+        //this.transform.position = bobPos;
+        //bobTransform.position = bobPos;
+    }
 
     public void ChangeLocation(Locations l)
     {
         Location = l;
     }
 
-    public void AddToGoldCarried(int amount)
-    {
-        GoldCarried += amount;
-    }
+
+    #endregion
+
+
+
+    #region STATE CHECKS
 
     public bool RichEnough()
     {
         return false;
-    }
-
-    public void AddToMoneyInBank(int amount)
-    {
-        MoneyInBank += amount;
-        GoldCarried = 0;
     }
 
     public bool PocketsFull()
@@ -92,19 +109,22 @@ public class Bob : MonoBehaviour {
         return thirsty;
     }
 
-    public void IncreaseFatigue()
-    {
-        Fatigue++;
-    }
 
-    public void IncreaseWaitedTime(int amount)
-    {
-        this.waitedTime += amount;
-    }
 
     public bool WaitedLongEnough()
     {
         return this.waitedTime >= WAIT_TIME;
+    }
+
+    #endregion
+
+
+
+    #region STATE UPDATE
+
+    public void IncreaseFatigue()
+    {
+        Fatigue++;
     }
 
     public void CreateTime()
@@ -113,14 +133,26 @@ public class Bob : MonoBehaviour {
         this.waitedTime = 0;
     }
 
-    public void ChangeState (State<Bob> state) {
-		this.stateMachine.ChangeState(state);
-	}
-
-    public void RevertToPreviousState()
+    public void IncreaseWaitedTime(int amount)
     {
-        this.stateMachine.RevertToPreviousState();
+        this.waitedTime += amount;
     }
+
+    public void AddToMoneyInBank(int amount)
+    {
+        MoneyInBank += amount;
+        GoldCarried = 0;
+    }
+
+    public void AddToGoldCarried(int amount)
+    {
+        GoldCarried += amount;
+    }
+
+    #endregion
+
+
+    #region EVENTS
 
     public void handlerBankRobbery()
     {
@@ -128,17 +160,7 @@ public class Bob : MonoBehaviour {
         Debug.Log("Bob: My money's been stolen!");
     }
 
-	public void Update () {
-        Thirst++;
-		this.stateMachine.Update();
-        
-
-        //updateSpriteLocation();
-
-        //this.transform.position = bobPos;
-        //bobTransform.position = bobPos;
-    }
-
+    #endregion
 
 
 
@@ -208,32 +230,7 @@ public class Bob : MonoBehaviour {
         }
     }
 
-
-    //Obselete
-    //public void updateSpriteLocation()
-    //{
-    //    if(Location == Locations.home)
-    //    {
-    //        bobPos = bobGrid.housePos;
-    //    }
-
-    //    else if (Location == Locations.goldmine)
-    //    {
-    //        bobPos = bobGrid.goldminePos;
-    //    }
-
-    //    else if (Location == Locations.bank)
-    //    {
-    //        bobPos = bobGrid.bankPos;
-    //    }
-
-    //    else if (Location == Locations.saloon)
-    //    {
-    //        bobPos = bobGrid.saloonPos;
-    //    }
-
-    //}
-
+    // These methods are called when the agent collides with certain location gameobjects
 
     public void BobAtGoldmine()
     {

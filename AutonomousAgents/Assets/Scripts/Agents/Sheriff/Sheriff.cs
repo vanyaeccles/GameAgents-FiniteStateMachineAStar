@@ -5,15 +5,27 @@ using System.Text;
 
 using UnityEngine;
 
+/*
+ *  This class defines the agent Sheriff
+ */
+
 public class Sheriff : MonoBehaviour
 {
 
     private StateMachine<Sheriff> stateMachine;
-    public Grid sheriffGrid;
+    
 
-    static Random rnd = new Random();
+    // AStar details
+    private Transform destination; // The position of the destination target
+    const float speed = 10; // Speed of the agent's movement
+    Vector3[] path; // A vector3 array containing the nodes in the path
+    int targetIndex;
 
     public Locations Location = Locations.jailhouse;
+    public Grid sheriffGrid;
+
+
+
     public int GoldCarried = 10;
     public int MoneyInBank = 0;
     public int Thirst = 0;
@@ -28,13 +40,11 @@ public class Sheriff : MonoBehaviour
     public int createdTime = 0;
     public bool isAtALocation;
 
-    // AStar details
-    private Transform destination; // The position of the destination target
-    float speed = 10; // Speed of the agent's movement
-    Vector3[] path; // A vector3 array containing the nodes in the path
-    int targetIndex;
+    static Random rnd = new Random();
 
 
+
+    #region STATE MACHINE + BASIC AGENT METHODS
 
     public void Awake()
     {
@@ -71,6 +81,27 @@ public class Sheriff : MonoBehaviour
         } 
     }
 
+    public void ChangeState(State<Sheriff> state)
+    {
+        this.stateMachine.ChangeState(state);
+    }
+
+    public void RevertToPreviousState()
+    {
+        this.stateMachine.RevertToPreviousState();
+    }
+
+
+    public void ChangeLocation(Locations l)
+    {
+        Location = l;
+    }
+
+    #endregion
+
+
+
+    #region STATE CHECKS
 
     public bool Thirsty()
     {
@@ -84,6 +115,20 @@ public class Sheriff : MonoBehaviour
         return noAmmo;
     }
 
+    public bool OutofMoney()
+    {
+        if (GoldCarried == 0)
+            return true;
+        else
+            return false;
+    }
+
+    #endregion
+
+
+
+    #region STATE UPDATE
+
     public void ShootBullet()
     {
         bullets--;
@@ -94,11 +139,6 @@ public class Sheriff : MonoBehaviour
         bullets = 6;
     }
 
-    public void ChangeLocation(Locations l)
-    {
-        Location = l;
-    }
-
     public void DrinkWhisky()
     {
         GoldCarried--;
@@ -106,13 +146,11 @@ public class Sheriff : MonoBehaviour
             sightPerceptiveness -= 1.0f;
     }
 
-    public bool OutofMoney()
-    {
-        if (GoldCarried == 0)
-            return true;
-        else
-            return false;
-    }
+    #endregion
+
+
+
+    #region SENSES 
 
     public void LookAhead()
     {
@@ -133,6 +171,10 @@ public class Sheriff : MonoBehaviour
         }
     }
 
+    #endregion
+
+
+
     public void TakeAimAndFire()
     {
         bullets--;
@@ -149,6 +191,8 @@ public class Sheriff : MonoBehaviour
         else Debug.Log("Sheriff: Darnit I missed him!");
     }
 
+
+
     public Vector3 ChooseRandomLocation()
     {
         //int r = rnd.Next(sheriffGrid.locationPositions.Count);
@@ -160,17 +204,7 @@ public class Sheriff : MonoBehaviour
         return randomLocPos;
     }
 
-    public void ChangeState(State<Sheriff> state)
-    {
-        this.stateMachine.ChangeState(state);
-    }
-
-    public void RevertToPreviousState()
-    {
-        this.stateMachine.RevertToPreviousState();
-    }
-
-    
+   
 
 
     #region MOVEMENT+PATHFINDING

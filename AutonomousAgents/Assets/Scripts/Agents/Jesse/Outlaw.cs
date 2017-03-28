@@ -5,14 +5,23 @@ using System.Text;
 using UnityEngine;
 
 
-
+/*
+ *  This class defines the agent Outlaw (Jesse)
+ */
 
 public class Outlaw : MonoBehaviour
 {
 
     private StateMachine<Outlaw> stateMachine;
+    private CapsuleCollider jesseCol;
 
-    
+
+    // Location + AStar details
+    //private AStarPathfinder bobLocManager;
+    private Transform destination; // The position of the destination target
+    const float speed = 13; // Speed of the agent's movement, he's a speedy fella
+    Vector3[] path; // A vector3 array containing the nodes in the path
+    int targetIndex;
 
     public Locations Location = Locations.outlawCamp;
     public Grid jesseGrid;
@@ -23,31 +32,28 @@ public class Outlaw : MonoBehaviour
     public int Thirst = 0;
     public int Fatigue = 0;
     public int missingSal;
-
     public int WAIT_TIME;
     public int JAIL_SENTANCE;
     public int waitedTime = 0;
     public int createdTime = 0;
-
+    public bool isDead;
 
 
     //create robbery event
     public delegate void bankRobbery();
     public static event bankRobbery OnBankRobbery;
 
+
     //create death event
     public delegate void jesseDead();
     public static event jesseDead OnJesseDead;
-    public bool isDead;
-    private CapsuleCollider jesseCol;
+ 
+    
 
-    // AStar details
-    //private AStarPathfinder bobLocManager;
-    private Transform destination; // The position of the destination target
-    float speed = 10; // Speed of the agent's movement
-    Vector3[] path; // A vector3 array containing the nodes in the path
-    int targetIndex;
 
+
+
+    #region STATE MACHINE + BASIC AGENT METHODS
 
     public void Awake()
     {
@@ -68,10 +74,31 @@ public class Outlaw : MonoBehaviour
         transform.position = jesseGrid.outlawCampPos;
     }
 
+
     public void Start()
     {
         Go(jesseGrid.outlawCampPos);
         this.stateMachine.Init(this, LurkAndPlot.Instance, OutlawGlobalState.Instance);
+    }
+
+    public void ChangeState(State<Outlaw> state)
+    {
+        this.stateMachine.ChangeState(state);
+    }
+
+    public void RevertToPreviousState()
+    {
+        this.stateMachine.RevertToPreviousState();
+    }
+
+    public void Update()
+    {
+        Thirst++;
+        this.stateMachine.Update();
+
+        //For debugging the undertaker behaviour
+        if (Input.GetKeyDown("space"))
+            getShotDead();
     }
 
     public void ChangeLocation(Locations l)
@@ -79,11 +106,34 @@ public class Outlaw : MonoBehaviour
         Location = l;
     }
 
+    #endregion
 
-    public void StealSomeGold()
+
+    #region STATE CHECKS
+
+    public bool RichEnough()
     {
-        int amount = Random.Range(1, 11);
-        GoldCarried += amount;
+        return false;
+    }
+
+    public bool PocketsFull()
+    {
+        bool full = GoldCarried == 2 ? true : false;
+        return full;
+    }
+
+    public bool Thirsty()
+    {
+        bool thirsty = Thirst == 10 ? true : false;
+        return thirsty;
+    }
+
+    public bool CompletedJailSentance()
+    {
+        if (this.waitedTime >= JAIL_SENTANCE)
+            return true;
+        else
+            return false;
     }
 
     public bool checkLuck()
@@ -96,12 +146,56 @@ public class Outlaw : MonoBehaviour
         else return true;
     }
 
-   public void robBank()
+
+    #endregion
+
+
+    #region STATE UPDATES
+
+
+    public void StealSomeGold()
+    {
+        int amount = Random.Range(1, 11);
+        GoldCarried += amount;
+    }
+
+    public void AddToMoneyInBank(int amount)
+    {
+        MoneyInBank += amount;
+        GoldCarried = 0;
+    }
+
+    public void IncreaseFatigue()
+    {
+        Fatigue++;
+    }
+
+    public void IncreaseWaitedTime(int amount)
+    {
+        this.waitedTime += amount;
+    }
+
+    public bool WaitedLongEnough()
+    {
+        return this.waitedTime >= WAIT_TIME;
+    }
+
+    #endregion
+
+
+    #region EVENTS
+
+    public void robBank()
     {
         //Note that if there is no Bob instanciated, Jesse will be stuck in the bank
-        //OnBankRobbery();
+        OnBankRobbery();
         StealSomeGold();
     }
+
+    #endregion
+
+
+    #region HANDLING_OF_SHOT_EVENT
 
     public void getShotDead()
     {
@@ -146,72 +240,8 @@ public class Outlaw : MonoBehaviour
             this.transform.position = GameObject.Find("Undertaker").GetComponent<Transform>().position;
     }
 
-    public bool RichEnough()
-    {
-        return false;
-    }
-
-    public void AddToMoneyInBank(int amount)
-    {
-        MoneyInBank += amount;
-        GoldCarried = 0;
-    }
-
-    public bool PocketsFull()
-    {
-        bool full = GoldCarried == 2 ? true : false;
-        return full;
-    }
-
-    public bool Thirsty()
-    {
-        bool thirsty = Thirst == 10 ? true : false;
-        return thirsty;
-    }
-
-    public void IncreaseFatigue()
-    {
-        Fatigue++;
-    }
-
-    public void IncreaseWaitedTime(int amount)
-    {
-        this.waitedTime += amount;
-    }
-
-    public bool WaitedLongEnough()
-    {
-        return this.waitedTime >= WAIT_TIME;
-    }
-
-    public bool CompletedJailSentance()
-    {
-        if (this.waitedTime >= JAIL_SENTANCE)
-            return true;
-        else
-            return false;
-    }
-
-
-    public void ChangeState(State<Outlaw> state)
-    {
-        this.stateMachine.ChangeState(state);
-    }
-
-    public void RevertToPreviousState()
-    {
-        this.stateMachine.RevertToPreviousState();
-    }
-
-    public void Update()
-    {
-        Thirst++;
-        this.stateMachine.Update();
-
-        //For debugging the undertaker behaviour
-        if (Input.GetKeyDown("space"))
-            getShotDead();
-    }
+    #endregion
+    
 
     #region MOVEMENT+PATHFINDING
 
@@ -279,6 +309,7 @@ public class Outlaw : MonoBehaviour
         }
     }
 
+    // These methods are called when the agent collides with certain location gameobjects
 
     public void JesseAtOutlawCamp()
     {

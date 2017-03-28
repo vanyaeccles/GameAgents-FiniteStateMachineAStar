@@ -5,15 +5,27 @@ using System.Text;
 
 using UnityEngine;
 
+/*
+ *  This class defines the agent Elsa
+ */
+
 public class Elsa : MonoBehaviour
 {
 
     private StateMachine<Elsa> stateMachine;
+    
+
+    // AStar details
+    //private AStarPathfinder elsaLocManager;
+    private Transform destination; // The position of the destination target
+    const float speed = 13; // Speed of the agent's movement, she's pretty speedy
+    Vector3[] path; // A vector3 array containing the nodes in the path
+    int targetIndex;
+
+    public Locations Location = Locations.house;
     public Grid elsaGrid;
 
 
-
-    public Locations Location = Locations.house;
     public int GoldCarried = 0;
     public int MoneyInBank = 0;
     public int Thirst = 0;
@@ -24,14 +36,10 @@ public class Elsa : MonoBehaviour
     public int waitedTime = 0;
     public int createdTime = 0;
 
-    // AStar details
-    //private AStarPathfinder elsaLocManager;
-    private Transform destination; // The position of the destination target
-    float speed = 10; // Speed of the agent's movement
-    Vector3[] path; // A vector3 array containing the nodes in the path
-    int targetIndex;
+    
 
 
+    #region STATE MACHINE + BASIC AGENT METHODS
 
     public void Awake()
     {
@@ -50,33 +58,6 @@ public class Elsa : MonoBehaviour
         this.stateMachine.Init(this, MakingSomeDinner.Instance, ElsaGlobalState.Instance);
     }
 
-    public bool Thirsty()
-    {
-        bool thirsty = Thirst == 10 ? true : false;
-        return thirsty;
-    }
-
-    public bool OutOfAmmo()
-    {
-        bool noAmmo = bullets == 0 ? true : false;
-        return noAmmo;
-    }
-
-    public void ShootBullet()
-    {
-        bullets--;
-    }
-
-    public void GetMoreAmmo()
-    {
-        bullets = 6;
-    }
-
-    public void ChangeLocation(Locations l)
-    {
-        Location = l;
-    }
-
     public void ChangeState(State<Elsa> state)
     {
         this.stateMachine.ChangeState(state);
@@ -92,6 +73,45 @@ public class Elsa : MonoBehaviour
         Thirst++;
         this.stateMachine.Update();
     }
+
+    public void ChangeLocation(Locations l)
+    {
+        Location = l;
+    }
+
+    #endregion
+
+
+    #region STATE CHECKS
+
+    public bool Thirsty()
+    {
+        bool thirsty = Thirst == 10 ? true : false;
+        return thirsty;
+    }
+
+    public bool OutOfAmmo()
+    {
+        bool noAmmo = bullets == 0 ? true : false;
+        return noAmmo;
+    }
+
+    #endregion
+
+
+    #region STATE UPDATE
+
+    public void ShootBullet()
+    {
+        bullets--;
+    }
+
+    public void GetMoreAmmo()
+    {
+        bullets = 6;
+    }
+
+    #endregion
 
 
     #region MOVEMENT+PATHFINDING
@@ -159,7 +179,8 @@ public class Elsa : MonoBehaviour
         }
     }
 
-    
+    // These methods are called when the agent collides with certain location gameobjects
+
     public void ElsaAtHouse()
     {
         ChangeLocation(Locations.house);

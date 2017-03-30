@@ -58,15 +58,19 @@ public sealed class OnPatrol : State<Sheriff>
 
             //agent.LookAhead();
 
-            if (!agent.InspectLocation())
+            if (!agent.SniffOutLocation())
             {
                 //Debug.Log("Sheriff: Nothing seems outta the order here");
-                agent.Speak("Nothing seems outta the order here");
-                agent.isAtALocation = false;
-                agent.Go(agent.sheriffGrid.jailhousePos);
-                agent.ChangeState(SleepOnTheJob.Instance);
+                agent.Speak("Nothing smells outta the order here");
             }
-            
+            else
+            {
+                agent.Speak("Something smells interesting!");
+            }
+            agent.isAtALocation = false;
+            agent.Go(agent.sheriffGrid.jailhousePos);
+            agent.ChangeState(SleepOnTheJob.Instance);
+
         }
     }
 

@@ -166,17 +166,73 @@ public class Sheriff : MonoBehaviour
 
         foreach (RaycastHit hit in hits)
         {
-            if (hit.distance <= sightPerceptiveness)
+            if (hits.Length > 0)
             {
-                if (hit.collider.tag == "Jesse")
+                if (hit.distance <= sightPerceptiveness)
                 {
-                    //Debug.LogError("Sheriff: There's that dirty scoundrel Jesse!");
-                    Speak("There's that dirty scoundrel Jesse!");
-                    if (bullets > 0)
-                        TakeAimAndFire();
+                    //calls a sight event to process the seen object
+                    SightEvent(hit);
                 }
             }
         }
+    }
+
+    //A sight event handler for raycasts
+    public void SightEvent(RaycastHit hit)
+    {
+        if (hit.collider.tag == "Jesse")
+        {
+            //Debug.LogError("Sheriff: There's that dirty scoundrel Jesse!");
+            Speak("There's that dirty scoundrel Jesse!");
+            if (bullets > 0)
+                TakeAimAndFire();
+        }
+        if (hit.collider.tag == "Elsa")
+        {
+            Speak("Howdy Elsa");
+        }
+        if (hit.collider.tag == "Bob")
+        {
+            Speak("Howdy Bob");
+        }
+        if (hit.collider.tag == "Undertaker")
+        {
+            Speak("I ain't seen you 'round here before!");
+        }
+    }
+
+    //A scent event handler for sphere colliders
+    public void ScentEvent(Collider hit)
+    {
+        if (hit.tag == "House")
+        {
+            Speak("I smell some darn good smelling stew!");
+        }
+
+        if (hit.tag == "Jesse")
+        {
+            //Debug.LogError("Sheriff: There's that dirty scoundrel Jesse!");
+            Speak("I smell that darn stinky scoundrel Jesse!");
+            if (bullets > 0)
+                TakeAimAndFire();
+        }
+    }
+
+    //Does a 360 sphere check to inspect a location with the Sheriff's great sense of smell!
+    public bool SniffOutLocation()
+    {
+        // performs an overlap sphere to check a location, if he smells Jesse he'll try shoot him
+        Collider[] smellHits = Physics.OverlapSphere(transform.position, sightPerceptiveness);
+
+        if (smellHits.Length > 0)
+        {
+            foreach (Collider i in smellHits)
+            {
+                ScentEvent(i);
+            }
+            return true;
+        }
+        return false;
     }
 
     #endregion
@@ -282,13 +338,7 @@ public class Sheriff : MonoBehaviour
         }
     }
 
-    public bool InspectLocation()
-    {
-        //have a wide look around?
-
-        // Nothing fishy here
-        return false;
-    }
+   
 
     public void Snooze()
     {

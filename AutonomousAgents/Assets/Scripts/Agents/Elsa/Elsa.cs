@@ -13,7 +13,7 @@ public class Elsa : MonoBehaviour
 {
 
     private StateMachine<Elsa> stateMachine;
-    
+    private Soul elsaSoul;
 
     // AStar details
     //private AStarPathfinder elsaLocManager;
@@ -36,18 +36,19 @@ public class Elsa : MonoBehaviour
     public int waitedTime = 0;
     public int createdTime = 0;
 
-    
+    private TextMesh elsaSpeech;
 
 
     #region STATE MACHINE + BASIC AGENT METHODS
 
     public void Awake()
     {
-        Debug.Log("Elsa is waking up...");
+        //Debug.Log("Elsa is waking up...");
         this.stateMachine = new StateMachine<Elsa>();
 
 
         elsaGrid = GameObject.Find("GameManager").GetComponent<Grid>();
+        elsaSpeech = GameObject.Find("ElsaText").GetComponent<TextMesh>();
 
         transform.position = elsaGrid.housePos;
     }
@@ -77,6 +78,11 @@ public class Elsa : MonoBehaviour
     public void ChangeLocation(Locations l)
     {
         Location = l;
+    }
+
+    public void Speak(string text)
+    {
+        elsaSpeech.text = text;
     }
 
     #endregion

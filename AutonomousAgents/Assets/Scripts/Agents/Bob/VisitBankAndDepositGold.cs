@@ -23,21 +23,24 @@ public sealed class VisitBankAndDepositGold : State<Bob> {
     public override void Enter(Bob agent)
     {
         agent.ChangeLocation(Locations.moving);
-        Debug.Log("Bob: On the way to the bank...");
+        //Debug.Log("Bob: On the way to the bank...");
+        agent.Speak("On the way to the bank...");
     }
 
     public override void Execute(Bob agent)
     {
         if (agent.Location != Locations.bank)
         {
-            Debug.Log("Bob: On the way to the bank...");
+            //Debug.Log("Bob: On the way to the bank...");
+            agent.Speak("On the way to the bank...");
         }
 
 
         //Checks if the agent is at their destination
         if (agent.Location == Locations.bank)
         {
-            Debug.Log("Bob: Feeding The System with MY gold... " + agent.MoneyInBank);
+            //Debug.Log("Bob: Feeding The System with MY gold... " + agent.MoneyInBank);
+            agent.Speak("Feeding The System with MY gold... " + agent.MoneyInBank);
             agent.AddToMoneyInBank(agent.GoldCarried);
 
             //Go back to mining
@@ -49,7 +52,8 @@ public sealed class VisitBankAndDepositGold : State<Bob> {
 
     public override void Exit(Bob agent)
     {
-        Debug.Log("Bob: Leaving the bank...");
+        //Debug.Log("Bob: Leaving the bank...");
+        agent.Speak("Leaving the bank...");
     }
 
 }

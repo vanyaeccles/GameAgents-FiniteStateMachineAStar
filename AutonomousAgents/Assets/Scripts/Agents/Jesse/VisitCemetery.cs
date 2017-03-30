@@ -27,7 +27,8 @@ public sealed class VisitCemetery : State<Outlaw>
         //if (agent.Location != Locations.cemetery)
         //{
         agent.ChangeLocation(Locations.moving);
-        Debug.Log("Jesse: Darn I miss Sal...");
+        //Debug.Log("Jesse: Darn I miss Sal...");
+        agent.Speak("Darn I miss Sal...");
         agent.waitedTime = 0;
         //}
     }
@@ -36,22 +37,24 @@ public sealed class VisitCemetery : State<Outlaw>
     {
         if (agent.Location != Locations.cemetery)
         {
-            Debug.Log("Jesse: On my way to the cemetery to visit Sal's grave..");
+            //Debug.Log("Jesse: On my way to the cemetery to visit Sal's grave..");
+            agent.Speak("On my way to the cemetery to visit Sal's grave..");
         }
 
         //Checks if the agent is at their destination
         if (agent.Location == Locations.cemetery)
         {
             agent.IncreaseWaitedTime(1);
-            Debug.Log("Jesse has been mourning for " + agent.waitedTime + " cycle" + (agent.waitedTime > 1 ? "s" : "") + " so far...");
-
+            //Debug.Log("Jesse has been mourning for " + agent.waitedTime + " cycle" + (agent.waitedTime > 1 ? "s" : "") + " so far...");
+            agent.Speak("Been mourning for " + agent.waitedTime + " cycle" + (agent.waitedTime > 1 ? "s" : "") + " so far...");
             agent.missingSal--;
 
             if (agent.WaitedLongEnough() && agent.missingSal < 2)
             {
                 agent.Go(agent.jesseGrid.outlawCampPos);
                 agent.ChangeState(LurkAndPlot.Instance);
-                Debug.Log("Jesse: I'll bet your raisin' hell in heaven");
+                //Debug.Log("Jesse: I'll bet your raisin' hell in heaven");
+                agent.Speak("I'll bet your raisin' hell in heaven");
             }
         }
     }
@@ -62,6 +65,7 @@ public sealed class VisitCemetery : State<Outlaw>
 
     public override void Exit(Outlaw agent)
     {
-        Debug.Log("Jesse: I will have revenge!");
+        //Debug.Log("Jesse: I will have revenge!");
+        agent.Speak("I will have revenge!");
     }
 }

@@ -26,7 +26,8 @@ public sealed class RobTheBank : State<Outlaw>
     {
         //if (agent.Location != Locations.bank)
         //{
-            Debug.Log("Jesse: Just a law abiding citizen on his way to the bank");
+        //Debug.Log("Jesse: Just a law abiding citizen on his way to the bank");
+        agent.Speak("Just a law abiding citizen on his way to the bank");
         //}
     }
 
@@ -36,13 +37,14 @@ public sealed class RobTheBank : State<Outlaw>
     {
         if (agent.Location != Locations.bank)
         {
-            Debug.Log("Jesse: Just a law abiding citizen on his way to the bank");
+            //Debug.Log("Jesse: Just a law abiding citizen on his way to the bank");
+            agent.Speak("Just a law abiding citizen on his way to the bank");
         }
 
         if (agent.Location == Locations.bank)
         {
-            Debug.Log("Jesse: This is a stick-up! Everyone on the floor!");
-
+            //Debug.Log("Jesse: This is a stick-up! Everyone on the floor!");
+            agent.Speak("This is a stick-up! Everyone on the floor!");
 
             //start the event
             agent.robBank();
@@ -53,7 +55,8 @@ public sealed class RobTheBank : State<Outlaw>
             if (!lucky)
             {
 
-                Debug.Log("Jesse: The Sheriff! ... I'll come quietly...");
+                //Debug.Log("Jesse: The Deputy! ... I'll come quietly...");
+                agent.Speak("The Deputy! ... I'll come quietly...");
                 agent.GoldCarried = 0;
                 agent.ChangeState(JailTime.Instance);
                 agent.Go(agent.jesseGrid.jailhousePos);
@@ -62,7 +65,8 @@ public sealed class RobTheBank : State<Outlaw>
             else
             {
                 agent.Go(agent.jesseGrid.outlawCampPos);
-                Debug.Log("Jesse: YeeHaw! Got away with it!");
+                //Debug.Log("Jesse: YeeHaw! Got away with it!");
+                agent.Speak("YeeHaw! Got away with it!");
                 agent.ChangeState(LurkAndPlot.Instance);
             }
         }
@@ -74,7 +78,8 @@ public sealed class RobTheBank : State<Outlaw>
 
     public override void Exit(Outlaw agent)
     {
-        Debug.Log("Jesse is leaving the bank");
+        //Debug.Log("Jesse is leaving the bank");
+        agent.Speak("Leaving this bank!");
     }
 
     

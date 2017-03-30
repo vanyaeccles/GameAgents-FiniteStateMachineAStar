@@ -26,8 +26,8 @@ public sealed class DrinkAtTheSaloon : State<Sheriff>
     {
         agent.ChangeLocation(Locations.moving);
 
-        Debug.Log("Sheriff: Going for a drink!");
-
+        //Debug.Log("Sheriff: Going for a drink!");
+        agent.Speak("Going for a drink!");
     }
 
 
@@ -35,11 +35,13 @@ public sealed class DrinkAtTheSaloon : State<Sheriff>
     public override void Execute(Sheriff agent)
     {
 
-        Debug.Log("Sheriff: Darn ahm thirsty");
+        //Debug.Log("Sheriff: Darn ahm thirsty");
+        agent.Speak("Darn ahm thirsty");
 
         if (agent.Location != Locations.saloon)
         {
-            Debug.Log("Sheriff: On official business to the saloon!");
+            //Debug.Log("Sheriff: On official business to the saloon!");
+            agent.Speak("On official business to the saloon!");
         }
 
         //Checks if the agent is at their destination
@@ -47,13 +49,15 @@ public sealed class DrinkAtTheSaloon : State<Sheriff>
         {
             if (!agent.OutofMoney())
             {
-                Debug.Log("Sheriff: Mmmm thirsty work!");
+                //Debug.Log("Sheriff: Mmmm thirsty work!");
+                agent.Speak("Mmmm thirsty work!");
                 agent.DrinkWhisky();
             }
             
             else
             {
-                Debug.Log("Sheriff: No cash! Gah better go do some policin'");
+                //Debug.Log("Sheriff: No cash! Gah better go do some policin'");
+                agent.Speak("No cash! Gah better go do some policin'");
                 agent.ChangeState(OnPatrol.Instance);
             }
         }
@@ -61,6 +65,6 @@ public sealed class DrinkAtTheSaloon : State<Sheriff>
 
     public override void Exit(Sheriff agent)
     {
-        Debug.Log("Sheriff: Goin' for a drink!");
+
     }
 }

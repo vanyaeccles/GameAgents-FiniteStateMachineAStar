@@ -26,8 +26,8 @@ public sealed class SleepOnTheJob : State<Sheriff>
     {
         agent.ChangeLocation(Locations.moving);
 
-        Debug.Log("Sheriff: Back to the office for a nap!");
-
+        //Debug.Log("Sheriff: Back to the office for a nap!");
+        agent.Speak("Back to the office for a nap!");
     }
 
 
@@ -37,7 +37,8 @@ public sealed class SleepOnTheJob : State<Sheriff>
 
         if (agent.Location != Locations.jailhouse)
         {
-            Debug.Log("Sheriff: Back to the office to take a look at that paperwork!");
+            //Debug.Log("Sheriff: Back to the office to take a look at that paperwork!");
+            agent.Speak("Back to the office to take a look at that paperwork!");
         }
 
         ////Checks if the agent is at their destination
@@ -45,11 +46,13 @@ public sealed class SleepOnTheJob : State<Sheriff>
         {
             agent.Snooze();
 
-            Debug.Log("Sheriff: ZZzzzzzzz");
+            //Debug.Log("Sheriff: ZZzzzzzzz");
+            agent.Speak("ZZZZzzzzzzzz");
 
             if(agent.SleptLongEnough())
             {
-                Debug.Log("Sheriff: ... !!! Oh! I.. Just resting my eyes for a second");
+                //Debug.Log("Sheriff: ... !!! Oh! I.. Just resting my eyes for a second");
+                agent.Speak("... !!! Oh! I.. Just resting my eyes for a second");
                 agent.ChangeState(OnPatrol.Instance);
             }
         }
@@ -57,6 +60,7 @@ public sealed class SleepOnTheJob : State<Sheriff>
 
     public override void Exit(Sheriff agent)
     {
-        Debug.Log("Sheriff: Goin' for a drink!");
+        //Debug.Log("Sheriff: Goin' for a drink!");
+        agent.Speak("Goin' for a drink!");
     }
 }

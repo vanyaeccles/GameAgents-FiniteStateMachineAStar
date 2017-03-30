@@ -6,7 +6,7 @@ public class PrairieCollision : MonoBehaviour {
 
     void OnTriggerEnter(Collider c)
     {
-        Debug.Log("Prairie Collision");
+        //Debug.Log("Prairie Collision");
 
         if (c.gameObject.tag == "Elsa")
         {

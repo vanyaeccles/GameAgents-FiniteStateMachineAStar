@@ -100,6 +100,7 @@
     <Compile Include="Assets\Scripts\Agents\Sheriff\Sheriff.cs" />
     <Compile Include="Assets\Scripts\Agents\Sheriff\SheriffGlobalState.cs" />
     <Compile Include="Assets\Scripts\Agents\Sheriff\SleepOnTheJob.cs" />
+    <Compile Include="Assets\Scripts\Agents\Soul.cs" />
     <Compile Include="Assets\Scripts\Agents\State.cs" />
     <Compile Include="Assets\Scripts\Agents\StateMachine.cs" />
     <Compile Include="Assets\Scripts\Agents\Undertaker\FixRobot.cs" />

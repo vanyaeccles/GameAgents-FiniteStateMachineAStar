@@ -20,7 +20,8 @@ public class SheriffGlobalState : State<Sheriff>
 
     public override void Enter(Sheriff agent)
     {
-        Debug.Log("Sheriff: I'm entering a blip");
+        //Debug.Log("Sheriff: I'm entering a blip");
+        agent.Speak("I'm entering a blip");
     }
 
     public override void Execute(Sheriff agent)
@@ -28,7 +29,8 @@ public class SheriffGlobalState : State<Sheriff>
         bool thirsty = agent.Thirsty();
         if (thirsty)
         {
-            Debug.Log("Sheriff: Jus' suppin' on ma whisky flask");
+            //Debug.Log("Sheriff: Jus' suppin' on ma whisky flask");
+            agent.Speak("Mmmm whisky.. Sometimes I feel like my memories aren't real or somethin'");
             agent.Thirst = 0;
         }
 
@@ -38,6 +40,7 @@ public class SheriffGlobalState : State<Sheriff>
     public override void Exit(Sheriff agent)
     {
         agent.RevertToPreviousState();
-        Debug.Log("Sheriff: I'm leaving a blip");
+        //Debug.Log("Sheriff: I'm leaving a blip");
+        agent.Speak("I'm leaving a blip");
     }
 }

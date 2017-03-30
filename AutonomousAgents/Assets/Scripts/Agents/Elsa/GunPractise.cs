@@ -27,8 +27,8 @@ public sealed class GunPractise : State<Elsa>
     {
         agent.ChangeLocation(Locations.moving);
 
-        Debug.Log("Elsa: Goin' Shootin!");
-        
+        //Debug.Log("Elsa: Goin' Shootin!");
+        agent.Speak("Goin' shootin!");
     }
 
 
@@ -37,13 +37,15 @@ public sealed class GunPractise : State<Elsa>
     {
         if (agent.Location != Locations.prairie)
         {
-            Debug.Log("Elsa: Goin' Shootin!");
+            //Debug.Log("Elsa: Goin' Shootin!");
+            agent.Speak("Goin' Shootin!");
         }
 
         //Checks if the agent is at their destination
         if (agent.Location == Locations.prairie)
         {
-            Debug.Log("Elsa: Bang bang! " + agent.bullets + " bullets left!");
+            //Debug.Log("Elsa: Bang bang! " + agent.bullets + " bullets left!");
+            agent.Speak("Bang bang! " + agent.bullets + " bullets left!");
             agent.ShootBullet();
 
             if (agent.OutOfAmmo())
@@ -61,7 +63,8 @@ public sealed class GunPractise : State<Elsa>
 
     public override void Exit(Elsa agent)
     {
-        Debug.Log("Elsa: Outta Bullets! I'm gitting pretty good");
+        //Debug.Log("Elsa: Outta Bullets! I'm gitting pretty good");
+        agent.Speak("Outta Bullets! I'm gitting pretty good");
 
     }
 

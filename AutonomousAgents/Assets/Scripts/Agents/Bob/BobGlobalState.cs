@@ -25,7 +25,8 @@ public sealed class BobGlobalState : State<Bob>
 
     public override void Enter(Bob agent)
     {
-        Debug.Log("Bob: I'm entering a blip");
+        //Debug.Log("Bob: I'm entering a blip");
+        agent.Speak("I'm entering a blip");
     }
 
     public override void Execute(Bob agent)
@@ -33,7 +34,8 @@ public sealed class BobGlobalState : State<Bob>
         bool thirsty = agent.Thirsty();
         if (thirsty)
         {
-            Debug.Log("Bob: I'm having a drink of water!");
+            //Debug.Log("Bob: I'm having a drink of water!");
+            agent.Speak("I'm having a drink of water!");
             agent.Thirst = 0;
         }
 
@@ -44,6 +46,7 @@ public sealed class BobGlobalState : State<Bob>
     public override void Exit(Bob agent)
     {
         agent.RevertToPreviousState();
-        Debug.Log("Bob: I'm leaving a blip");
+        //Debug.Log("Bob: I'm leaving a blip");
+        agent.Speak("I'm leaving a blip");
     }
 }

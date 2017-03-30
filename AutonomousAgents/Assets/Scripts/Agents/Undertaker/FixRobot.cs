@@ -24,7 +24,8 @@ public sealed class FixRobot : State<Undertaker>
     {
         agent.ChangeLocation(Locations.moving);
 
-        Debug.Log("Undertaker: I hope the dust doesn't get into the model's microphone again...");
+        //Debug.Log("Undertaker: I hope the dust doesn't get into the model's microphone again...");
+        agent.Speak("I hope the dust doesn't get into the model's microphone again...");
     }
 
 
@@ -34,13 +35,15 @@ public sealed class FixRobot : State<Undertaker>
 
         if (!agent.isAtBrokenRobot())
         {
-            Debug.Log("Undertaker: I hope the dust doesn't get into the t1000's microphone again...");
+            //Debug.Log("Undertaker: I hope the dust doesn't get into the t1000's microphone again...");
+            agent.Speak("I hope the dust doesn't get into the t1000's microphone again...");
         }
 
         ////Checks if the agent is at their destination
         if (agent.isAtBrokenRobot())
         {
-            Debug.Log("Undertaker: Ah, come with me please");
+            //Debug.Log("Undertaker: Ah, come with me please");
+            agent.Speak("Ah, come with me please");
             agent.DragRobot();
 
             //Expensive
@@ -48,7 +51,8 @@ public sealed class FixRobot : State<Undertaker>
 
             if (agent.Location == Locations.robotWorkshop)
             {
-                Debug.Log("Undertaker: Just needs a new robot heart");
+                //Debug.Log("Undertaker: Just needs a new robot heart");
+                agent.Speak("Just needs a new robot heart");
                 GameObject.Find("Jesse").SendMessage("JesseIsFixed");
                 agent.isWithRobot = false;
                 agent.ChangeState(TinkerWithRobots.Instance);
@@ -60,6 +64,7 @@ public sealed class FixRobot : State<Undertaker>
 
     public override void Exit(Undertaker agent)
     {
-        Debug.Log("Undertaker: the model is fixed");
+        //Debug.Log("Undertaker: the model is fixed");
+        agent.Speak("Wonderful, the model is fixed");
     }
 }

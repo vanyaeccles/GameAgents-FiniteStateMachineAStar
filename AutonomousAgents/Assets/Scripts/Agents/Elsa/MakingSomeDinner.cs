@@ -27,7 +27,8 @@ public sealed class MakingSomeDinner: State<Elsa>
 
         //if (agent.Location != Locations.house)
         //{
-            Debug.Log("Elsa: On my way home..");
+        //Debug.Log("Elsa: On my way home..");
+        agent.Speak("On my way home");
         //}
     }
 
@@ -35,14 +36,15 @@ public sealed class MakingSomeDinner: State<Elsa>
     {
         if (agent.Location != Locations.house)
         {
-            Debug.Log("Elsa: On my way home..");
+            //Debug.Log("Elsa: On my way home..");
+            agent.Speak("On my way home");
         }
 
         //Checks if the agent is at their destination
         if (agent.Location == Locations.house)
         {
-            Debug.Log("Elsa: This is great stew");
-
+            //Debug.Log("Elsa: This is great stew");
+            agent.Speak("This is great stew");
             agent.Go(agent.elsaGrid.prairiePos);
             agent.ChangeState(GunPractise.Instance);
         }
@@ -52,7 +54,8 @@ public sealed class MakingSomeDinner: State<Elsa>
     public override void Exit(Elsa agent)
     {
         agent.GetMoreAmmo();
-        Debug.Log("Leaving the home, armed...");
+        //Debug.Log("Leaving the home, armed...");
+        agent.Speak("Leaving the home, armed...");
     }
 
 }

@@ -25,7 +25,8 @@ public sealed class ElsaGlobalState : State<Elsa>
 
     public override void Enter(Elsa agent)
     {
-        Debug.Log("Elsa: I'm entering a blip");
+        //Debug.Log("Elsa: I'm entering a blip");
+        agent.Speak("I'm entering a blip!");
     }
 
     public override void Execute(Elsa agent)
@@ -33,7 +34,8 @@ public sealed class ElsaGlobalState : State<Elsa>
         bool thirsty = agent.Thirsty();
         if (thirsty)
         {
-            Debug.Log("Elsa: I'm having a drink of water!");
+            //Debug.Log("Elsa: I'm having a drink of water!");
+            agent.Speak("II'm having a drink of water! Why can't I remember tomorrow?");
             agent.Thirst = 0;
         }
 
@@ -43,6 +45,7 @@ public sealed class ElsaGlobalState : State<Elsa>
     public override void Exit(Elsa agent)
     {
         agent.RevertToPreviousState();
-        Debug.Log("Elsa: I'm leaving a blip");
+        //Debug.Log("Elsa: I'm leaving a blip");
+        agent.Speak("I'm leaving a blip");
     }
 }

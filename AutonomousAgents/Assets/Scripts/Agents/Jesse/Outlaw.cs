@@ -13,6 +13,7 @@ public class Outlaw : MonoBehaviour
 {
 
     private StateMachine<Outlaw> stateMachine;
+    private Soul jesseSoul;
     private CapsuleCollider jesseCol;
 
 
@@ -47,17 +48,17 @@ public class Outlaw : MonoBehaviour
     //create death event
     public delegate void jesseDead();
     public static event jesseDead OnJesseDead;
- 
-    
 
 
+
+    private TextMesh jesseSpeech;
 
 
     #region STATE MACHINE + BASIC AGENT METHODS
 
     public void Awake()
     {
-        Debug.Log("Jesse the outlaw is waking up...");
+        //Debug.Log("Jesse the outlaw is waking up...");
         this.stateMachine = new StateMachine<Outlaw>();
 
 
@@ -70,6 +71,7 @@ public class Outlaw : MonoBehaviour
 
 
         jesseGrid = GameObject.Find("GameManager").GetComponent<Grid>();
+        jesseSpeech = GameObject.Find("JesseText").GetComponent<TextMesh>();
 
         transform.position = jesseGrid.outlawCampPos;
     }
@@ -104,6 +106,11 @@ public class Outlaw : MonoBehaviour
     public void ChangeLocation(Locations l)
     {
         Location = l;
+    }
+
+    public void Speak(string text)
+    {
+        jesseSpeech.text = text;
     }
 
     #endregion
@@ -188,7 +195,7 @@ public class Outlaw : MonoBehaviour
     public void robBank()
     {
         //Note that if there is no Bob instanciated, Jesse will be stuck in the bank
-        OnBankRobbery();
+        //OnBankRobbery();
         StealSomeGold();
     }
 

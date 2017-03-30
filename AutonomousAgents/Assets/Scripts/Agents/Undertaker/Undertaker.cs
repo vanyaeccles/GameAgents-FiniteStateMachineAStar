@@ -10,6 +10,7 @@ using UnityEngine;
 public class Undertaker : MonoBehaviour
 {
     private StateMachine<Undertaker> stateMachine;
+    private Soul undertakerSoul;
 
     // AStar details
     private Transform destination; // The position of the destination target
@@ -25,19 +26,20 @@ public class Undertaker : MonoBehaviour
     public Transform brokenRobotPos;
     public bool isWithRobot = false;
 
-    
 
+    private TextMesh undertakerSpeech;
 
     #region STATE MACHINE + BASIC AGENT METHODS
 
     public void Awake()
     {
-        Debug.Log("The scientist is waking up...");
+        //Debug.Log("The scientist is waking up...");
         this.stateMachine = new StateMachine<Undertaker>();
 
         Outlaw.OnJesseDead += handlerJesseBroken;
 
         undertakerGrid = GameObject.Find("GameManager").GetComponent<Grid>();
+        undertakerSpeech = GameObject.Find("UndertakerText").GetComponent<TextMesh>();
 
         transform.position = undertakerGrid.housePos;
     }
@@ -69,6 +71,11 @@ public class Undertaker : MonoBehaviour
         this.stateMachine.Update();
     }
 
+    public void Speak(string text)
+    {
+        undertakerSpeech.text = text;
+    }
+
     #endregion
 
 
@@ -87,8 +94,8 @@ public class Undertaker : MonoBehaviour
 
     public void handlerJesseBroken()
     {
-        Debug.Log("Undertaker: Ah the t1000 is in need of repair");
-
+        //Debug.Log("Undertaker: Ah the t1000 is in need of repair");
+        Speak("Ah the t1000 is in need of repair");
         brokenRobotPos = GameObject.Find("Jesse").GetComponent<Transform>();
         Go(brokenRobotPos.position);
         ChangeState(FixRobot.Instance);
@@ -180,7 +187,7 @@ public class Undertaker : MonoBehaviour
 
     public void UndertakerAtRobot()
     {
-        Debug.Log("Arrived at robot");
+        //Debug.Log("Arrived at robot");
         isWithRobot = true;
     }
 

@@ -26,6 +26,14 @@ public class Grid : MonoBehaviour{
         }
     }
 
+    // For holding the layermask and the movement cost, serializable -> Want it to show up in the editor
+    [System.Serializable]
+    public class TerrainType
+    {
+        public LayerMask terrainMask;
+        public int terrainCost;
+    }
+
 
     public bool displayGridGizmos;
 
@@ -39,7 +47,7 @@ public class Grid : MonoBehaviour{
 
     LayerMask walkableMask;
 
-    // Takes an int ID for the region and returns an int for the movement cost
+    // Dictionary speeds up searching for the layer cost, Takes an int ID for the region and returns an int for the movement cost
     Dictionary<int, int> walkableRegionsDictionary = new Dictionary<int, int>(); 
 
 
@@ -58,6 +66,7 @@ public class Grid : MonoBehaviour{
     //public Count treeCount = new Count(4, 6);
 
     public GameObject lake;
+    public GameObject lake2;
     public GameObject house;
     public GameObject goldmine;
     public GameObject bank;
@@ -69,6 +78,7 @@ public class Grid : MonoBehaviour{
     public GameObject workshop;
 
     public Vector3 lakePos;
+    public Vector3 lake2Pos;
     public Vector3 housePos;
     public Vector3 goldminePos;
     public Vector3 bankPos;
@@ -87,23 +97,14 @@ public class Grid : MonoBehaviour{
     #endregion
 
 
-    void Update()
-    {
-        if (lightTransform.position.y < 0.0f)
-            isDayTime = false;
-
-        else isDayTime = true;
-    }
-
-
     void Awake()
     {
         locationPositions = new List<Vector3>();
 
         nodeDiameter = nodeRadius * 2;
 
-        gridSizeX = Mathf.RoundToInt(gridWorldSize.x/nodeDiameter);
-        gridSizeY = Mathf.RoundToInt(gridWorldSize.y/nodeDiameter);
+        gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
+        gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
 
 
         //Instantiate locations etc
@@ -113,15 +114,32 @@ public class Grid : MonoBehaviour{
 
         foreach (TerrainType region in walkableRegions)
         {
+            // Layers in Unity are stored in a 32bit integer
             //Bitwise or gets the next element in unity's layer system, 
             walkableMask.value |= region.terrainMask.value;
-            //This computes the layer cost as from the ie layer 9 would have 2^12 @TODO
-            // IE ask to what power should 2 be raised in order to equal the terrainMask value
-            walkableRegionsDictionary.Add((int)Mathf.Log(region.terrainMask.value,2), region.terrainPenalty);
+            // This computes the layer cost as from the ie layer 9 would have 2^12 
+            // IE ask to what power should 2 be raised in order to equal the terrainMask value 
+            walkableRegionsDictionary.Add((int)Mathf.Log(region.terrainMask.value, 2), region.terrainCost);
         }
 
+        
+    }
+
+    void Start()
+    {
         CreateGrid();
     }
+
+    void Update()
+    {
+        if (lightTransform.position.y < 0.0f)
+            isDayTime = false;
+
+        else isDayTime = true;
+    }
+
+
+    
 
     // This function creates positions where we can spawn locations (buildings, trees etc)
     void createWorldPositions()
@@ -180,6 +198,7 @@ public class Grid : MonoBehaviour{
         workshopPos = RandomPosition();
 
         lakePos = RandomPosition();
+        lake2Pos = RandomPosition();
 
 
 
@@ -202,6 +221,7 @@ public class Grid : MonoBehaviour{
         Instantiate(outlawCamp, outlawCampPos, Quaternion.Euler(45, 0, 0)); // I rotate the cuboid to make it look like a tent
         Instantiate(prairie, prairiePos, Quaternion.identity);
         Instantiate(lake, lakePos, Quaternion.identity);
+        Instantiate(lake2, lake2Pos, Quaternion.identity);
         Instantiate(workshop, workshopPos, Quaternion.identity);
 
     }
@@ -226,10 +246,12 @@ public class Grid : MonoBehaviour{
                 //Uses a raycast to determine the movement cost of locations
                 if(isWalkable)
                 {
+                    // Ray starts from high above and shoots straight down to get the layer mask of any objects it hits
                     Ray ray = new Ray(worldPoint + Vector3.up * 45, Vector3.down);
                     RaycastHit hit;
                     if (Physics.Raycast(ray, out hit, 100, walkableMask))
                     {
+                        //Debug.Log("Layer" + hit.collider.gameObject.layer);
                         walkableRegionsDictionary.TryGetValue(hit.collider.gameObject.layer, out movementCost);
                     }
                 }
@@ -327,10 +349,3 @@ public class Grid : MonoBehaviour{
 
 
 
-//Want it to show up in the editor
-[System.Serializable]
-public class TerrainType
-{
-    public LayerMask terrainMask;
-    public int terrainPenalty;
-}

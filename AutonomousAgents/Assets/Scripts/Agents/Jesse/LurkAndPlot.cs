@@ -24,7 +24,8 @@ public sealed class LurkAndPlot : State<Outlaw>
     public override void Enter(Outlaw agent)
     {
         //agent.ChangeLocation(Locations.moving);
-        Debug.Log("Jesse: Another day of sweet crime!");
+        //Debug.Log("Jesse: Another day of sweet crime!");
+        agent.Speak("Jesse: Another day of sweet crime!");
         agent.waitedTime = 0;
         agent.missingSal = UnityEngine.Random.Range(0, 10);
 
@@ -34,15 +35,16 @@ public sealed class LurkAndPlot : State<Outlaw>
     {
         if (agent.Location != Locations.outlawCamp)
         {
-            Debug.Log("Jesse: On ma way back to camp...");
+            //Debug.Log("Jesse: On ma way back to camp...");
+            agent.Speak("On ma way back to camp...");
         }
 
         //Checks if the agent is at their destination
         if (agent.Location == Locations.outlawCamp)
         {
             agent.IncreaseWaitedTime(1);
-            Debug.Log("Jesse has been lurking and plotting for " + agent.waitedTime + " minute" + (agent.waitedTime > 1 ? "s" : "") + " so far...");
-
+            //Debug.Log("Jesse has been lurking and plotting for " + agent.waitedTime + " minute" + (agent.waitedTime > 1 ? "s" : "") + " so far...");
+            agent.Speak("Been lurking and plotting for " + agent.waitedTime + " minute" + (agent.waitedTime > 1 ? "s" : "") + " so far...");
             if (agent.WaitedLongEnough() && agent.missingSal < 5)
             {
                 agent.Go(agent.jesseGrid.bankPos);
@@ -58,7 +60,8 @@ public sealed class LurkAndPlot : State<Outlaw>
 
     public override void Exit(Outlaw agent)
     {
-        Debug.Log("Jesse: I'm getting out of here!");
+        //Debug.Log("Jesse: I'm getting out of here!");
+        agent.Speak("I'm getting out of here!");
     }
 }
 

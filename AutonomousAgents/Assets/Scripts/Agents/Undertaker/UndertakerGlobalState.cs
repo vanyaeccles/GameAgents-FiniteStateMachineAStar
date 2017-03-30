@@ -20,7 +20,8 @@ public class UndertakerGlobalState : State<Undertaker>
 
     public override void Enter(Undertaker agent)
     {
-        Debug.Log("Undertaker: I'm entering a blip");
+        //Debug.Log("Undertaker: I'm entering a blip");
+        agent.Speak("I'm entering a blip");
     }
 
     public override void Execute(Undertaker agent)
@@ -28,7 +29,8 @@ public class UndertakerGlobalState : State<Undertaker>
         bool thirsty = agent.Thirsty();
         if (thirsty)
         {
-            Debug.Log("Undertaker: The difference is: I'm ACTUALLY thirsty");
+            //Debug.Log("Undertaker: The difference is: I'm ACTUALLY thirsty");
+            agent.Speak("The difference is: I'm ACTUALLY thirsty");
             agent.Thirst = 0;
         }
 
@@ -38,6 +40,7 @@ public class UndertakerGlobalState : State<Undertaker>
     public override void Exit(Undertaker agent)
     {
         agent.RevertToPreviousState();
-        Debug.Log("Undertaker: I'm leaving a blip");
+        //Debug.Log("Undertaker: I'm leaving a blip");
+        agent.Speak("The difference is: I'm ACTUALLY thirsty");
     }
 }

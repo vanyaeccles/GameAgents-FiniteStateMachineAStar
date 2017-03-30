@@ -13,7 +13,7 @@ public class Sheriff : MonoBehaviour
 {
 
     private StateMachine<Sheriff> stateMachine;
-    
+    private Soul sheriffSoul;
 
     // AStar details
     private Transform destination; // The position of the destination target
@@ -42,19 +42,21 @@ public class Sheriff : MonoBehaviour
 
     static Random rnd = new Random();
 
+    private TextMesh sheriffSpeech;
 
 
     #region STATE MACHINE + BASIC AGENT METHODS
 
     public void Awake()
     {
-        Debug.Log("Sheriff is waking up...");
+        //Debug.Log("Sheriff is waking up...");
         this.stateMachine = new StateMachine<Sheriff>();
 
         sleepThreshold = Random.Range(40, 150);
         sightPerceptiveness = 20.0f;
 
         sheriffGrid = GameObject.Find("GameManager").GetComponent<Grid>();
+        sheriffSpeech = GameObject.Find("SheriffText").GetComponent<TextMesh>();
 
         transform.position = sheriffGrid.jailhousePos;
     }
@@ -95,6 +97,11 @@ public class Sheriff : MonoBehaviour
     public void ChangeLocation(Locations l)
     {
         Location = l;
+    }
+
+    public void Speak(string text)
+    {
+        sheriffSpeech.text = text;
     }
 
     #endregion
@@ -163,7 +170,8 @@ public class Sheriff : MonoBehaviour
             {
                 if (hit.collider.tag == "Jesse")
                 {
-                    Debug.LogError("Sheriff: There's that dirty scoundrel Jesse!");
+                    //Debug.LogError("Sheriff: There's that dirty scoundrel Jesse!");
+                    Speak("There's that dirty scoundrel Jesse!");
                     if (bullets > 0)
                         TakeAimAndFire();
                 }
@@ -185,10 +193,11 @@ public class Sheriff : MonoBehaviour
         {
             GameObject.Find("Jesse").SendMessage("getShotDead");
 
-            Debug.LogError("Sheriff: Got that yella belly!");
+            //Debug.LogError("Sheriff: Got that yella belly!");
+            Speak("Got that yella belly!");
         }
 
-        else Debug.Log("Sheriff: Darnit I missed him!");
+        else Speak("Darnit I missed him!"); //Debug.Log("Sheriff: Darnit I missed him!");
     }
 
 
@@ -301,7 +310,8 @@ public class Sheriff : MonoBehaviour
         ChangeLocation(Locations.jailhouse);
         GoldCarried += Random.Range(40, 100);
         GetMoreAmmo();
-        Debug.Log("Sheriff: Got me s'more cash and ammo from the safe");
+        //Debug.Log("Sheriff: Got me s'more cash and ammo from the safe");
+        Speak("Got me s'more cash and ammo from the safe");
     }
 
     public void SheriffAtSaloon()

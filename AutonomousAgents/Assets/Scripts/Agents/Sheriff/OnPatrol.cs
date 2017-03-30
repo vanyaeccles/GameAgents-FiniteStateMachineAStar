@@ -26,7 +26,8 @@ public sealed class OnPatrol : State<Sheriff>
     {
         //agent.ChangeLocation(Locations.moving);
 
-        Debug.Log("Sheriff: Going on patrol!");
+        //Debug.Log("Sheriff: Going on patrol!");
+        agent.Speak("Going on patrol!");
 
         //Pick a random location
         chosenLocPos = agent.ChooseRandomLocation();
@@ -44,36 +45,35 @@ public sealed class OnPatrol : State<Sheriff>
 
         if (!agent.isAtALocation)
         {
-            Debug.Log("Sheriff: On patrol!");
+            //Debug.Log("Sheriff: On patrol!");
+            agent.Speak("On patrol!");
             //agent.LookAhead();
         }
 
         ////Checks if the agent is at their destination
         if (agent.isAtALocation)
         {
-            Debug.Log("Sheriff: What have we here?");
+            //Debug.Log("Sheriff: What have we here?");
+            agent.Speak("What have we here?");
 
             //agent.LookAhead();
 
             if (!agent.InspectLocation())
             {
-                Debug.Log("Sheriff: Nothing seems outta the order here");
-
+                //Debug.Log("Sheriff: Nothing seems outta the order here");
+                agent.Speak("Nothing seems outta the order here");
                 agent.isAtALocation = false;
                 agent.Go(agent.sheriffGrid.jailhousePos);
                 agent.ChangeState(SleepOnTheJob.Instance);
             }
             
         }
-
-
-
-
-
     }
+
 
     public override void Exit(Sheriff agent)
     {
-        Debug.Log("Sheriff: Goin' for a drink!");
+        //Debug.Log("Sheriff: Goin' for a drink!");
+        agent.Speak("Goin' for a drink");
     }
 }

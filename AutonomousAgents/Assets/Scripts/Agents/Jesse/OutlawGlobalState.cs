@@ -25,22 +25,26 @@ public sealed class OutlawGlobalState : State<Outlaw>
 
     public override void Enter(Outlaw agent)
     {
-        Debug.Log("Jesse: I wonder...");
+        //Debug.Log("Jesse: I wonder...");
+        agent.Speak("I wonder...");
     }
+
 
     public override void Execute(Outlaw agent)
     {
         bool thirsty = agent.Thirsty();
         if (thirsty)
         {
-            Debug.Log("Jesse: I'm having a drink of water!");
+            //Debug.Log("Jesse: What if none of this is really real?");
+            agent.Speak("What if none of this is really real?");
             agent.Thirst = 0;
         }
     }
 
     public override void Exit(Outlaw agent)
     {
-        Debug.Log("Jesse: I'm done daydreamin'");
+        //Debug.Log("Jesse: I'm done daydreamin'");
+        agent.Speak("I'm done daydreamin'");
         agent.RevertToPreviousState();
     }
 }

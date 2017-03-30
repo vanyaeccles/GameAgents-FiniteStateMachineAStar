@@ -24,7 +24,8 @@ public sealed class TinkerWithRobots : State<Undertaker>
     {
         agent.ChangeLocation(Locations.moving);
 
-        Debug.Log("Undertaker: More work to be done back at the lab!");
+        //Debug.Log("Undertaker: More work to be done back at the lab!");
+        agent.Speak("More work to be done back at the lab!");
     }
 
     public override void Execute(Undertaker agent)
@@ -32,19 +33,22 @@ public sealed class TinkerWithRobots : State<Undertaker>
 
         if (agent.Location != Locations.robotWorkshop)
         {
-            Debug.Log("Undertaker: More work to be done back at the lab!");
+            //Debug.Log("Undertaker: More work to be done back at the lab!");
+            agent.Speak("More work to be done back at the lab!");
         }
 
         ////Checks if the agent is at their destination
         if (agent.Location == Locations.robotWorkshop)
         {
-            Debug.Log("Undertaker: These robots keep breaking!");
+            //Debug.Log("Undertaker: These robots keep breaking!");
+            agent.Speak("These robots keep breaking!");
         }
     }
 
 
     public override void Exit(Undertaker agent)
     {
-        Debug.Log("Undertaker: Duty calls!");
+        //Debug.Log("Undertaker: Duty calls!");
+        agent.Speak("Duty Calls!");
     }
 }

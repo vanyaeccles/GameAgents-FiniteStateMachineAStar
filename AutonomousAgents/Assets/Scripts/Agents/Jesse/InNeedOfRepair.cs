@@ -25,20 +25,23 @@ public sealed class InNeedOfRepair : State<Outlaw>
     {
         agent.ChangeLocation(Locations.broken);
 
-        Debug.Log("Jesse: BBZZzzzzzzzzasdhliuewnkjdsndodsif");
+        //Debug.Log("Jesse: BBZZzzzzzzzzasdhliuewnkjdsndodsif");
+        agent.Speak("BBZZzzzzzzzzasdhliuewnkjdsndodsif");
     }
 
     public override void Execute(Outlaw agent)
     {
         if (agent.Location != Locations.robotWorkshop)
         {
-            Debug.Log("Jesse: 01010111002");
+            //Debug.Log("Jesse: 01010111002");
+            agent.Speak("01010111002");
         }
     }
 
 
     public override void Exit(Outlaw agent)
     {
-        Debug.Log("Jesse: Feeling fine!");
+        //Debug.Log("Jesse: Feeling fine!");
+        agent.Speak("I dunno what happened but I feel great!");
     }
 }

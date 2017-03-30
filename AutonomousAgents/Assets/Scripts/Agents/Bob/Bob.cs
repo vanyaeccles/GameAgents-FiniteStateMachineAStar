@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /*
  *  This class defines the agent Bob
@@ -9,7 +10,7 @@ using UnityEngine;
 public class Bob : MonoBehaviour {
 
 	private StateMachine<Bob> stateMachine;
-
+    private Soul bobSoul;
 
     // AStar details
     //private AStarPathfinder bobLocManager;
@@ -21,6 +22,7 @@ public class Bob : MonoBehaviour {
     public Locations Location = Locations.goldmine;
     public Grid bobGrid;
     
+
 
     //public Transform bobTransform;
 
@@ -35,19 +37,20 @@ public class Bob : MonoBehaviour {
     public int createdTime = 0;
 
 
-    
+    private TextMesh bobSpeech;
 
 
     #region STATE MACHINE + BASIC AGENT METHODS
 
     public void Awake () {
-        Debug.Log("Bob is waking up...");
+        //Debug.Log("Bob is waking up...");
 		this.stateMachine = new StateMachine<Bob>();
 		
       
         Outlaw.OnBankRobbery += handlerBankRobbery;
 
         bobGrid = GameObject.Find("GameManager").GetComponent<Grid>();
+        bobSpeech = GameObject.Find("BobText").GetComponent<TextMesh>();
 
         transform.position = bobGrid.housePos;
     }
@@ -86,6 +89,11 @@ public class Bob : MonoBehaviour {
     }
 
 
+    public void Speak(string text)
+    {
+        bobSpeech.text = text;
+    }
+
     #endregion
 
 
@@ -99,7 +107,7 @@ public class Bob : MonoBehaviour {
 
     public bool PocketsFull()
     {
-        bool full = GoldCarried == 20 ? true : false;
+        bool full = GoldCarried == 150 ? true : false;
         return full;
     }
 
@@ -157,7 +165,8 @@ public class Bob : MonoBehaviour {
     public void handlerBankRobbery()
     {
         MoneyInBank -= 20;
-        Debug.Log("Bob: My money's been stolen!");
+        //Debug.Log("Bob: My money's been stolen!");
+        Speak("My money's been stolen!");
     }
 
     #endregion

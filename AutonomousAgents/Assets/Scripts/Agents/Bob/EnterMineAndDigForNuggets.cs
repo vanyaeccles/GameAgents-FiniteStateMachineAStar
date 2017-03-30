@@ -24,7 +24,8 @@ using UnityEngine;
 
     public override void Enter(Bob agent)
     {
-        Debug.Log("Bob: On my way to the mine...");
+        //Debug.Log("Bob: On my way to the mine...");
+        agent.Speak("On my way to the mine...");
         agent.ChangeLocation(Locations.moving);
     }
 
@@ -32,7 +33,8 @@ using UnityEngine;
     {
         if (agent.Location != Locations.goldmine)
         {
-            Debug.Log("Bob: On my way to the gold mine...");
+            agent.Speak("On my way to the gold mine...");
+            //Debug.Log("Bob: On my way to the gold mine...");
         }
 
 
@@ -40,8 +42,11 @@ using UnityEngine;
         if (agent.Location == Locations.goldmine)
         {
             agent.AddToGoldCarried(1);
-            Debug.Log("Bob: Picking up a nugget and that's..." +
-              agent.GoldCarried);
+            //Debug.Log("Bob: Picking up a nugget and that's..." +
+            //  agent.GoldCarried);
+
+            agent.Speak("Picking up a nugget and that's..." + agent.GoldCarried);
+
             agent.IncreaseFatigue();
             if (agent.PocketsFull())
             {
@@ -53,6 +58,7 @@ using UnityEngine;
 
     public override void Exit(Bob agent)
     {
-        Debug.Log("Bob: Leaving the mine with my pockets full...");
+        //Debug.Log("Bob: Leaving the mine with my pockets full...");
+        agent.Speak("Leaving the mine with my pockets full...");
     }
 }

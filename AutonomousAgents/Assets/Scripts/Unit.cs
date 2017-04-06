@@ -14,7 +14,7 @@ public class Unit : MonoBehaviour
 
     void Start()
     {
-        PathRequestManager.RequestPath(transform.position, destination.position, OnPathFound);
+        //PathRequestManager.RequestPath(transform.position, destination.position, OnPathFound);
     }
 
 

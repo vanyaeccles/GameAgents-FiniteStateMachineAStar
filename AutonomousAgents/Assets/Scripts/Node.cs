@@ -14,6 +14,7 @@ public class Node
     public int gridX; //Pos on X in grid coordinates
     public int gridY; //Pos on Y in grid coordinates
     public int movementCost; // Cost of movement on this Node
+    public int soundPropogationCost; // Cost of sound propogation
 
 
     // AStar-related Node variables
@@ -22,7 +23,7 @@ public class Node
     public Node parent; //The nodes parent in the current AStar path
 
 
-    public Node(Vector3 _world, int _gridX, int _gridY, bool _walk, int _cost)
+    public Node(Vector3 _world, int _gridX, int _gridY, bool _walk, int _cost, int _soundCost)
     {
         // Set position variables
         worldPos = _world;
@@ -32,6 +33,7 @@ public class Node
         // Set AStar movement variables
         isWalkable = _walk;
         movementCost = _cost;
+        soundPropogationCost = _cost;
     }
 
     //Compute fCost as its needed, this will change dynamically depending on place in the path

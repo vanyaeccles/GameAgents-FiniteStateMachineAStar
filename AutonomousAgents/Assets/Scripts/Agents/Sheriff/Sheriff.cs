@@ -277,11 +277,11 @@ public class Sheriff : MonoBehaviour
     public void Go(Vector3 _destination)
     {
         isAtALocation = false;
-        PathRequestManager.RequestPath(transform.position, _destination, OnPathFound);
+        PathRequestManager.RequestPath(transform.position, _destination, false, OnPathFound);
     }
 
 
-    public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
+    public void OnPathFound(Vector3[] newPath, bool pathSuccessful, bool isSoundPath)
     {
         if (pathSuccessful)
         {

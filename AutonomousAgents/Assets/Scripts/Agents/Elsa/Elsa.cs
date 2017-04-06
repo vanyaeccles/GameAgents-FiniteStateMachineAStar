@@ -55,7 +55,7 @@ public class Elsa : MonoBehaviour
 
     public void Start()
     {
-        Go(elsaGrid.housePos);
+        //Go(elsaGrid.housePos);
         this.stateMachine.Init(this, MakingSomeDinner.Instance, ElsaGlobalState.Instance);
     }
 
@@ -114,7 +114,7 @@ public class Elsa : MonoBehaviour
 
     public void GetMoreAmmo()
     {
-        bullets = 6;
+        bullets = 60;
     }
 
     #endregion
@@ -124,11 +124,11 @@ public class Elsa : MonoBehaviour
 
     public void Go(Vector3 _destination)
     {
-        PathRequestManager.RequestPath(transform.position, _destination, OnPathFound);
+        PathRequestManager.RequestPath(transform.position, _destination, false, OnPathFound);
     }
 
 
-    public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
+    public void OnPathFound(Vector3[] newPath, bool pathSuccessful, bool isSoundPath)
     {
         if (pathSuccessful)
         {
@@ -141,23 +141,26 @@ public class Elsa : MonoBehaviour
 
     IEnumerator FollowPath()
     {
-        Vector3 currentWaypoint = path[0];
-        while (true)
+        if (path != null)
         {
-            if (transform.position == currentWaypoint)
+            Vector3 currentWaypoint = path[0];
+            while (true)
             {
-                targetIndex++;
-                if (targetIndex >= path.Length)
+                if (transform.position == currentWaypoint)
                 {
-                    yield break;
+                    targetIndex++;
+                    if (targetIndex >= path.Length)
+                    {
+                        yield break;
+                    }
+                    currentWaypoint = path[targetIndex];
                 }
-                currentWaypoint = path[targetIndex];
+
+                transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+                yield return null;
+
+                //Debug.Log("Following path");
             }
-
-            transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
-            yield return null;
-
-            //Debug.Log("Following path");
         }
     }
 

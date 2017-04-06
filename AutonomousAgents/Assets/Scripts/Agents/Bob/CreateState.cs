@@ -1,5 +1,8 @@
 using UnityEngine;
 
+//OLD AND DEPRECATED, currently not used
+
+
 public sealed class CreateState : State<Bob> {
 	
 	static readonly CreateState instance = new CreateState();

@@ -27,9 +27,9 @@ public class PathRequestManager : MonoBehaviour
 
     // 
     // - uses Action delegate - this is simply an encapsulated method that returns no value, or a void encapsulated method
-    public static void RequestPath(Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> callback)
+    public static void RequestPath(Vector3 pathStart, Vector3 pathEnd, bool isSoundPath, Action<Vector3[], bool, bool> callback)
     {
-        PathRequest newRequest = new PathRequest(pathStart, pathEnd, callback);
+        PathRequest newRequest = new PathRequest(pathStart, pathEnd, isSoundPath, callback);
         instance.pathRequestQueue.Enqueue(newRequest);
         instance.ProcessNextRequest();
     }
@@ -41,14 +41,14 @@ public class PathRequestManager : MonoBehaviour
         {
             currentPathRequest = pathRequestQueue.Dequeue(); // gets the first one out to process
             isProcessingPath = true;
-            pathfinding.StartFindPath(currentPathRequest.pathStartPoint, currentPathRequest.pathEndPoint);
+            pathfinding.StartFindPath(currentPathRequest.pathStartPoint, currentPathRequest.pathEndPoint, currentPathRequest.isSoundPath);
         }
     }
 
     // 
-    public void CurrentPathFound(Vector3[] path, bool success)
+    public void CurrentPathFound(Vector3[] path, bool success, bool isSoundPath)
     {
-        currentPathRequest.callback(path, success); // uses the Action delegate to return the path vector and the bool to the 'Follow path' method of the agent
+        currentPathRequest.callback(path, success, isSoundPath); // uses the Action delegate to return the path vector and the bool to the 'Follow path' method of the agent
         isProcessingPath = false;
         ProcessNextRequest();
     }
@@ -59,12 +59,14 @@ public class PathRequestManager : MonoBehaviour
     {
         public Vector3 pathStartPoint;
         public Vector3 pathEndPoint;
-        public Action<Vector3[], bool> callback; // This is are the parameters that are returned to the agent that requested the path (eg a vector of the path and whether a path was found)
+        public bool isSoundPath;
+        public Action<Vector3[], bool, bool> callback; // These are the parameters that are returned to the agent that requested the path (eg a vector of the path and whether a path was found)
 
-        public PathRequest(Vector3 _start, Vector3 _end, Action<Vector3[], bool> _callback)
+        public PathRequest(Vector3 _start, Vector3 _end, bool _isSoundPath, Action<Vector3[], bool, bool> _callback)
         {
             pathStartPoint = _start;
             pathEndPoint = _end;
+            isSoundPath = _isSoundPath;
             callback = _callback;
         }
 

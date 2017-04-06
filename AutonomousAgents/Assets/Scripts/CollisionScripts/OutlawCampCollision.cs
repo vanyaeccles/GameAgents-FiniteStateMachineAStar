@@ -4,6 +4,16 @@ using UnityEngine;
 
 public class OutlawCampCollision : MonoBehaviour {
 
+    ParticleSystem smoke;
+
+    void Start()
+    {
+        smoke = GameObject.Find("CampFire").GetComponent<ParticleSystem>();
+        smoke.Play();
+    }
+
+    
+
     void OnTriggerEnter(Collider c)
     {
         //Debug.Log("Collision");
@@ -12,7 +22,10 @@ public class OutlawCampCollision : MonoBehaviour {
         {
             //Debug.Log("Bob is Here");
             GameObject.Find("Jesse").SendMessage("JesseAtOutlawCamp");
+            smoke.Play();
         }
 
     }
+
+
 }

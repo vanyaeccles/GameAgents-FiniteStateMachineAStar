@@ -113,11 +113,11 @@ public class Undertaker : MonoBehaviour
 
     public void Go(Vector3 _destination)
     {
-        PathRequestManager.RequestPath(transform.position, _destination, OnPathFound);
+        PathRequestManager.RequestPath(transform.position, _destination, false, OnPathFound);
     }
 
 
-    public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
+    public void OnPathFound(Vector3[] newPath, bool pathSuccessful, bool isSoundPath)
     {
         if (pathSuccessful)
         {

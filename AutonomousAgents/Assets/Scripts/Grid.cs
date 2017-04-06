@@ -26,12 +26,26 @@ public class Grid : MonoBehaviour{
         }
     }
 
+    // for storing the terrain data
+    public struct Vector2i
+    {
+        public int moveC;
+        public int soundC;
+
+        public Vector2i(int _i, int _j)
+        {
+            moveC = _i;
+            soundC = _j;
+        }
+    }
+
     // For holding the layermask and the movement cost, serializable -> Want it to show up in the editor
     [System.Serializable]
     public class TerrainType
     {
         public LayerMask terrainMask;
         public int terrainCost;
+        public int soundCost;
     }
 
 
@@ -48,8 +62,13 @@ public class Grid : MonoBehaviour{
     LayerMask walkableMask;
 
     // Dictionary speeds up searching for the layer cost, Takes an int ID for the region and returns an int for the movement cost
-    Dictionary<int, int> walkableRegionsDictionary = new Dictionary<int, int>(); 
+    //Dictionary<int, int> walkableRegionsDictionary = new Dictionary<int, int>();
 
+    // Dictionary speeds up searching for the layer cost, Takes an int ID for the region and returns a vector of the costs associated with that region
+    Dictionary<int, Vector2i> regionsDictionary = new Dictionary<int, Vector2i>();
+
+
+    //Vector2(int, int) hello = new Vector2;
 
     Node[,] thisgrid;
 
@@ -119,7 +138,9 @@ public class Grid : MonoBehaviour{
             walkableMask.value |= region.terrainMask.value;
             // This computes the layer cost as from the ie layer 9 would have 2^12 
             // IE ask to what power should 2 be raised in order to equal the terrainMask value 
-            walkableRegionsDictionary.Add((int)Mathf.Log(region.terrainMask.value, 2), region.terrainCost);
+            //walkableRegionsDictionary.Add((int)Mathf.Log(region.terrainMask.value, 2), region.terrainCost);
+
+            regionsDictionary.Add((int)Mathf.Log(region.terrainMask.value, 2), new Vector2i(region.terrainCost, region.soundCost));
         }
 
         
@@ -152,7 +173,7 @@ public class Grid : MonoBehaviour{
         worldLocationPositions.Clear();
 
         int xStart = -(int)(gridWorldSize[0] / 2) + 5;
-        int zStart = -(int)(gridWorldSize[1] / 2) + 5;
+        int zStart = -(int)(gridWorldSize[1] / 2) + 10;
 
         int xRange = (int)Mathf.Abs(gridWorldSize[0]/2 - 5);
         int zRange = (int)Mathf.Abs(gridWorldSize[1]/2 - 5);
@@ -246,7 +267,10 @@ public class Grid : MonoBehaviour{
                 //Set the bool based on the layermask
                 bool isWalkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
 
+
+                Vector2i costVector;
                 int movementCost = 0;
+                int soundCost = 0;
 
                 //Uses a raycast to determine the movement cost of locations
                 if(isWalkable)
@@ -257,11 +281,15 @@ public class Grid : MonoBehaviour{
                     if (Physics.Raycast(ray, out hit, 100, walkableMask))
                     {
                         //Debug.Log("Layer" + hit.collider.gameObject.layer);
-                        walkableRegionsDictionary.TryGetValue(hit.collider.gameObject.layer, out movementCost);
+                        //walkableRegionsDictionary.TryGetValue(hit.collider.gameObject.layer, out movementCost);
+                        regionsDictionary.TryGetValue(hit.collider.gameObject.layer, out costVector);
+
+                        movementCost = costVector.moveC;
+                        soundCost = costVector.soundC;
                     }
                 }
 
-                thisgrid[x, y] = new Node( worldPoint, x, y, isWalkable, movementCost);
+                thisgrid[x, y] = new Node( worldPoint, x, y, isWalkable, movementCost, soundCost);
             }
         }
     }
@@ -270,11 +298,11 @@ public class Grid : MonoBehaviour{
     //Gets the node from a given world position 
     public Node GetNodeFromWorldPos(Vector3 worldPosition)
     {
-        float percentX = (worldPosition.x - transform.position.x) / gridWorldSize.x + 0.5f - (nodeRadius / gridWorldSize.x);
-        float percentY = (worldPosition.z - transform.position.z) / gridWorldSize.y + 0.5f - (nodeRadius / gridWorldSize.y);
+        //float percentX = (worldPosition.x - transform.position.x) / gridWorldSize.x + 0.5f - (nodeRadius / gridWorldSize.x);
+        //float percentY = (worldPosition.z - transform.position.z) / gridWorldSize.y + 0.5f - (nodeRadius / gridWorldSize.y);
 
-        //float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
-        //float percentY = (worldPosition.z + gridWorldSize.x / 2) / gridWorldSize.y;
+        float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
+        float percentY = (worldPosition.z + gridWorldSize.x / 2) / gridWorldSize.y;
 
         percentX = Mathf.Clamp01(percentX);
         percentY = Mathf.Clamp01(percentY);

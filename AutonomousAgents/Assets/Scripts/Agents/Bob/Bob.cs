@@ -15,19 +15,18 @@ public class Bob : MonoBehaviour {
     // AStar details
     //private AStarPathfinder bobLocManager;
     private Transform destination; // The position of the destination target
-    const float speed = 10; // Speed of the agent's movement
     Vector3[] path; // A vector3 array containing the nodes in the path
     int targetIndex;
 
     public Locations Location = Locations.goldmine;
     public Grid bobGrid;
-    
+
 
 
     //public Transform bobTransform;
 
 
-
+    const float speed = 10; // Speed of the agent's movement
     public int GoldCarried = 0;
     public int MoneyInBank = 0;
     public int Thirst = 0;
@@ -35,7 +34,7 @@ public class Bob : MonoBehaviour {
     public static int WAIT_TIME = 5;
     public int waitedTime = 0;
     public int createdTime = 0;
-
+    public int hearingThreshold = 30;
 
     private TextMesh bobSpeech;
 
@@ -66,6 +65,8 @@ public class Bob : MonoBehaviour {
     public void Start()
     {
         Go(bobGrid.goldminePos);
+
+        //ListenOut(bobGrid.goldminePos);
 
         this.stateMachine.Init(this, EnterMineAndDigForNuggets.Instance, BobGlobalState.Instance);
     }
@@ -133,6 +134,16 @@ public class Bob : MonoBehaviour {
         return this.waitedTime >= WAIT_TIME;
     }
 
+    // Checks his hearing, if his pockets are full of gold all he can hear is how wealthy he is
+    public int CheckHearing()
+    {
+        hearingThreshold = 75;
+
+        hearingThreshold -= GoldCarried;
+
+        return hearingThreshold; 
+    }
+
     #endregion
 
 
@@ -184,16 +195,25 @@ public class Bob : MonoBehaviour {
 
     #region MOVEMENT+PATHFINDING
 
+    // Requests a movement path from the AStar pathfinder
     public void Go(Vector3 _destination)
     {
         //Debug.Log("Bob is Going");
-        PathRequestManager.RequestPath(transform.position, _destination, OnPathFound);
+        PathRequestManager.RequestPath(transform.position, _destination, false, OnPathFound); //false because its not a hearing check
     }
 
-
-    public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
+    // Requests an auditory path from the AStar pathfinder
+    public void ListenOut(Vector3 interestPoint)
     {
-        if (pathSuccessful)
+        //Debug.Log("Bob is Going");
+        PathRequestManager.RequestPath(transform.position, interestPoint, true, OnSoundPathFound); //true because it is a hearing check!
+    }
+
+    //Supplied by the path request manager when a path is found
+    public void OnPathFound(Vector3[] newPath, bool pathSuccessful, bool isSoundPath)
+    {
+        //if its a movement path, get the agent to follow it
+        if (pathSuccessful && !isSoundPath)
         {
             path = newPath;
             targetIndex = 0;
@@ -202,25 +222,51 @@ public class Bob : MonoBehaviour {
         }
     }
 
+
+    public void OnSoundPathFound(Vector3[] newPath, bool pathSuccessful, bool isSoundPath)
+    {
+        //if its a sound path, see if the item of interest was within the auditory threshold
+        if (pathSuccessful && isSoundPath)
+        {
+            //Debug.Log(newPath.Length);
+
+            if (newPath.Length <= CheckHearing())
+            {
+                Speak("Sounds like that outlaw!");
+                //Debug.Log("Bob heard something!");
+            }
+            else
+            {
+                Speak("Its pretty quiet, but I'm sure rich!");
+                //Debug.Log("Bob heard nothing");
+            }  
+        }
+    }
+
+
+
     IEnumerator FollowPath()
     {
-        Vector3 currentWaypoint = path[0];
-        while (true)
+        if (path != null)
         {
-            if (transform.position == currentWaypoint)
+            Vector3 currentWaypoint = path[0];
+            while (true)
             {
-                targetIndex++;
-                if (targetIndex >= path.Length)
+                if (transform.position == currentWaypoint)
                 {
-                    yield break;
+                    targetIndex++;
+                    if (targetIndex >= path.Length)
+                    {
+                        yield break;
+                    }
+                    currentWaypoint = path[targetIndex];
                 }
-                currentWaypoint = path[targetIndex];
+
+                transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+                yield return null;
+
+                //Debug.Log("Following path");
             }
-
-            transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
-            yield return null;
-
-            //Debug.Log("Following path");
         }
     }
 

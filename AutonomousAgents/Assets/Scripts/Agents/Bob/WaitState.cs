@@ -1,5 +1,8 @@
 using UnityEngine;
 
+//OLD AND DEPRECATED, currently not used
+
+
 public sealed class WaitState : State<Bob> {
 
 	static readonly WaitState instance = new WaitState();

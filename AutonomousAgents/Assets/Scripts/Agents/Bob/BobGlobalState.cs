@@ -6,7 +6,6 @@ using System.Text;
 using UnityEngine;
 
 
-
 public sealed class BobGlobalState : State<Bob>
 {
 

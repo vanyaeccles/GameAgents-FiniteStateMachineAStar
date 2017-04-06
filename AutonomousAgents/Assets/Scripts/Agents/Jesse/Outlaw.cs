@@ -79,7 +79,7 @@ public class Outlaw : MonoBehaviour
 
     public void Start()
     {
-        Go(jesseGrid.outlawCampPos);
+        //Go(jesseGrid.outlawCampPos);
         this.stateMachine.Init(this, LurkAndPlot.Instance, OutlawGlobalState.Instance);
     }
 
@@ -255,11 +255,11 @@ public class Outlaw : MonoBehaviour
     public void Go(Vector3 _destination)
     {
         //Debug.Log("Jesse is Going");
-        PathRequestManager.RequestPath(transform.position, _destination, OnPathFound);
+        PathRequestManager.RequestPath(transform.position, _destination, false, OnPathFound);
     }
 
 
-    public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
+    public void OnPathFound(Vector3[] newPath, bool pathSuccessful, bool isSoundPath)
     {
         if (pathSuccessful)
         {

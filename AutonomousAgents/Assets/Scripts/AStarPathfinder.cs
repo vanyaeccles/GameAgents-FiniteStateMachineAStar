@@ -27,10 +27,10 @@ public class AStarPathfinder : MonoBehaviour {
     }
 
 
-    public void StartFindPath(Vector3 startPos, Vector3 targetPos)
+    public void StartFindPath(Vector3 startPos, Vector3 targetPos, bool soundPath)
     {
         // initiates AStar to begin the path search
-        StartCoroutine(FindAstarPath(startPos, targetPos));
+        StartCoroutine(FindAstarPath(startPos, targetPos, soundPath));
     }
 
 
@@ -38,17 +38,18 @@ public class AStarPathfinder : MonoBehaviour {
     // AStar pathfinding Code
     // Receives start and target in world coordinates
     // Returns the path as a Vector3 array
-    IEnumerator FindAstarPath(Vector3 startPos, Vector3 targetPos)
+    IEnumerator FindAstarPath(Vector3 startPos, Vector3 targetPos, bool isSoundPath)
     {
         Vector3[] pathWaypoints = new Vector3[0]; // The returned path
         bool isPathFound = false;
+        
 
         Node startNode = asgrid.GetNodeFromWorldPos(startPos);   // The node we start with (converted from world coords)
         Node targetNode = asgrid.GetNodeFromWorldPos(targetPos); // Node we want to get to (converted from world coords)      
 
 
-        UnityEngine.Debug.Log(startNode.gridX + " " + startNode.gridY);
-        UnityEngine.Debug.Log(targetNode.gridX + " " + targetNode.gridY);
+        //UnityEngine.Debug.Log(startNode.gridX + " " + startNode.gridY);
+        //UnityEngine.Debug.Log(targetNode.gridX + " " + targetNode.gridY);
 
 
 
@@ -107,8 +108,19 @@ public class AStarPathfinder : MonoBehaviour {
                         continue;
                     }
 
-                
-                    int newCostToNeighbour = currentN.gCost + GetNode2NodeDistance(currentN, neighbour) + neighbour.movementCost;
+
+                    int newCostToNeighbour;
+
+                    // Are we creating an auditory path?
+                    if(isSoundPath)
+                    {
+                        newCostToNeighbour = currentN.gCost + GetNode2NodeDistance(currentN, neighbour) + neighbour.soundPropogationCost; 
+                    }
+
+                    else
+                        newCostToNeighbour = currentN.gCost + GetNode2NodeDistance(currentN, neighbour) + neighbour.movementCost;
+
+
 
                     // if the neighbour has a lesser cost and isn't already in the open set, set the cost and parent and add to open set
                     if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
@@ -136,18 +148,19 @@ public class AStarPathfinder : MonoBehaviour {
         if (isPathFound)
         {
             //Retrace the path and set it as a Vector3 of waypoints
-            pathWaypoints = RetracePath(startNode, targetNode);
+            pathWaypoints = RetracePath(startNode, targetNode, isSoundPath);
         }
 
+
         // Gives the path back to the request manager, will return an empty path if no path was found
-        requestManager.CurrentPathFound(pathWaypoints, isPathFound);
+        requestManager.CurrentPathFound(pathWaypoints, isPathFound, isSoundPath);
     }
 
 
 
 
     //Retraces the path from the endNode to the startNode, path is stored in grid
-    Vector3[] RetracePath(Node startNode, Node endNode)
+    Vector3[] RetracePath(Node startNode, Node endNode, bool isSoundPath)
     {
         List<Node> path = new List<Node>();
         Node currentNode = endNode;
@@ -159,7 +172,13 @@ public class AStarPathfinder : MonoBehaviour {
             currentNode = currentNode.parent;
         }
 
-        Vector3[] waypoints = SimplifyPath(path);
+        Vector3[] waypoints;
+
+        if (!isSoundPath)
+            waypoints = SimplifyPath(path);
+        else
+            waypoints = ReturnPathOfNodes(path);
+
         //Reverse it to get the path
         Array.Reverse(waypoints);
 
@@ -184,6 +203,18 @@ public class AStarPathfinder : MonoBehaviour {
             }
         }
         return waypoints.ToArray();
+    }
+
+    Vector3[] ReturnPathOfNodes(List<Node> path)
+    {
+        List<Vector3> pathpoints = new List<Vector3>();
+
+        for (int i = 1; i < path.Count; i++)
+        {
+             pathpoints.Add(path[i].worldPos);
+        }
+
+        return pathpoints.ToArray();
     }
 
 

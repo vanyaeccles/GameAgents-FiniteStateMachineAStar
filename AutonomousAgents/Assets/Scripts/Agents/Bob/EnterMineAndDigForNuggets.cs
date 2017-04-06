@@ -53,6 +53,9 @@ using UnityEngine;
                 agent.Go(agent.bobGrid.bankPos);
                 agent.ChangeState(VisitBankAndDepositGold.Instance);
             }
+
+            //if he hears jesse he might get a little creeped out!
+            agent.ListenOut(GameObject.Find("Jesse").GetComponent<Transform>().position);
         }    
     }
 

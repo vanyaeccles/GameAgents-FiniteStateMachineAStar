@@ -12,14 +12,20 @@ public class AStarPathfinder : MonoBehaviour {
 
     
     PathRequestManager requestManager; // This handles getting and receiving paths from the AStar algorithm
-    Grid grid; // A copy of the grid
+    public Grid asgrid; // A copy of the grid
 
 
     void Awake()
     {
         requestManager = GetComponent<PathRequestManager>();
-        grid = GetComponent<Grid>();
+        asgrid = GetComponent<Grid>();
     }
+
+    public void Start()
+    {
+        //UnityEngine.Debug.Log(grid);
+    }
+
 
     public void StartFindPath(Vector3 startPos, Vector3 targetPos)
     {
@@ -37,8 +43,13 @@ public class AStarPathfinder : MonoBehaviour {
         Vector3[] pathWaypoints = new Vector3[0]; // The returned path
         bool isPathFound = false;
 
-        Node startNode = grid.GetNodeFromWorldPos(startPos);   // The node we start with (converted from world coords)
-        Node targetNode = grid.GetNodeFromWorldPos(targetPos); // Node we want to get to (converted from world coords)
+        Node startNode = asgrid.GetNodeFromWorldPos(startPos);   // The node we start with (converted from world coords)
+        Node targetNode = asgrid.GetNodeFromWorldPos(targetPos); // Node we want to get to (converted from world coords)      
+
+
+        UnityEngine.Debug.Log(startNode.gridX + " " + startNode.gridY);
+        UnityEngine.Debug.Log(targetNode.gridX + " " + targetNode.gridY);
+
 
 
         //Check that the start and target are both walkable
@@ -88,7 +99,7 @@ public class AStarPathfinder : MonoBehaviour {
 
 
                 // Go through the neighbours and 
-                foreach (Node neighbour in grid.GetNodeNeighbours(currentN))
+                foreach (Node neighbour in asgrid.GetNodeNeighbours(currentN))
                 {
                     //If neighbour is not traversable or in the CLOSED set, skip to next neighbour
                     if (!neighbour.isWalkable || closedSet.Contains(neighbour))

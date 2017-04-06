@@ -49,7 +49,15 @@ public class Bob : MonoBehaviour {
       
         Outlaw.OnBankRobbery += handlerBankRobbery;
 
-        bobGrid = GameObject.Find("GameManager").GetComponent<Grid>();
+        if ((bobGrid == null) && (GameObject.Find("GameManager").GetComponent<Grid>() != null))
+        {
+            bobGrid = GameObject.Find("GameManager").GetComponent<Grid>();
+        }
+        else
+        {
+            Debug.LogWarning("Missing grid script component. Please add one");
+        }
+
         bobSpeech = GameObject.Find("BobText").GetComponent<TextMesh>();
 
         transform.position = bobGrid.housePos;
@@ -58,6 +66,7 @@ public class Bob : MonoBehaviour {
     public void Start()
     {
         Go(bobGrid.goldminePos);
+
         this.stateMachine.Init(this, EnterMineAndDigForNuggets.Instance, BobGlobalState.Instance);
     }
 

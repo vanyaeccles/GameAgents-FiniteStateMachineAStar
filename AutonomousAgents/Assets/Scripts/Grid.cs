@@ -51,7 +51,7 @@ public class Grid : MonoBehaviour{
     Dictionary<int, int> walkableRegionsDictionary = new Dictionary<int, int>(); 
 
 
-    Node[,] grid;
+    Node[,] thisgrid;
 
     float nodeDiameter;
     int gridSizeX, gridSizeY;
@@ -128,7 +128,12 @@ public class Grid : MonoBehaviour{
     void Start()
     {
         CreateGrid();
+
+        // Test nodefromworldpos function
+        //Node myNode = GetNodeFromWorldPos(new Vector3(0.0f, 0.0f, 0.0f));
+        //Debug.Log(myNode);
     }
+
 
     void Update()
     {
@@ -229,7 +234,7 @@ public class Grid : MonoBehaviour{
     // Creates the Grid for Astar, also determines if locations are walkable and gets their movement cost
     void CreateGrid()
     {
-        grid = new Node[gridSizeX, gridSizeY];
+        thisgrid = new Node[gridSizeX, gridSizeY];
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
 
         for (int x = 0; x < gridSizeX; x++)
@@ -256,7 +261,7 @@ public class Grid : MonoBehaviour{
                     }
                 }
 
-                grid[x, y] = new Node( worldPoint, x, y, isWalkable, movementCost);
+                thisgrid[x, y] = new Node( worldPoint, x, y, isWalkable, movementCost);
             }
         }
     }
@@ -265,18 +270,19 @@ public class Grid : MonoBehaviour{
     //Gets the node from a given world position 
     public Node GetNodeFromWorldPos(Vector3 worldPosition)
     {
-        //float percentX = (worldPosition.x - transform.position.x) / gridWorldSize.x + 0.5f - (nodeRadius / gridWorldSize.x);
-        //float percentY = (worldPosition.z - transform.position.z) / gridWorldSize.y + 0.5f - (nodeRadius / gridWorldSize.y);
+        float percentX = (worldPosition.x - transform.position.x) / gridWorldSize.x + 0.5f - (nodeRadius / gridWorldSize.x);
+        float percentY = (worldPosition.z - transform.position.z) / gridWorldSize.y + 0.5f - (nodeRadius / gridWorldSize.y);
 
-        float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
-        float percentY = (worldPosition.z + gridWorldSize.x / 2) / gridWorldSize.y;
+        //float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
+        //float percentY = (worldPosition.z + gridWorldSize.x / 2) / gridWorldSize.y;
 
         percentX = Mathf.Clamp01(percentX);
         percentY = Mathf.Clamp01(percentY);
 
         int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
         int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
-        return grid[x, y];
+
+        return thisgrid[x, y];
     }
 
 
@@ -299,7 +305,7 @@ public class Grid : MonoBehaviour{
 
                 if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
                 {
-                    nodeNeighbours.Add(grid[checkX, checkY]);
+                    nodeNeighbours.Add(thisgrid[checkX, checkY]);
                 }
             }
         }
@@ -325,9 +331,9 @@ public class Grid : MonoBehaviour{
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
 
-            if (grid != null && displayGridGizmos)
+            if (thisgrid != null && displayGridGizmos)
             {
-                foreach (Node n in grid)
+                foreach (Node n in thisgrid)
                 {
                     //if walkable, draw white, if not draw red
                     Gizmos.color = (n.isWalkable) ? Color.white : Color.red;

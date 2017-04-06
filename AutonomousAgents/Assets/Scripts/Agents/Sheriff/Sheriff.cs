@@ -221,8 +221,10 @@ public class Sheriff : MonoBehaviour
     //Does a 360 sphere check to inspect a location with the Sheriff's great sense of smell!
     public bool SniffOutLocation()
     {
-        // performs an overlap sphere to check a location, if he smells Jesse he'll try shoot him
-        Collider[] smellHits = Physics.OverlapSphere(transform.position, sightPerceptiveness);
+        Vector3 windDir = GameObject.Find("Directional Light").GetComponent<SunScript>().windDirection;
+
+        // performs an overlap sphere (sphere center adjusted for current wind) to check a location, if he smells Jesse he'll try shoot him
+        Collider[] smellHits = Physics.OverlapSphere(transform.position + windDir, sightPerceptiveness);
 
         if (smellHits.Length > 0)
         {

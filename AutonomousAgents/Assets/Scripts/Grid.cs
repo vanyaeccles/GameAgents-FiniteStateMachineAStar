@@ -51,8 +51,10 @@ public class Grid : MonoBehaviour{
 
     public bool displayGridGizmos;
 
+    //Environmental modelling (for sensing)
     public Transform lightTransform;
     public bool isDayTime;
+    public Vector3 windDirection;
 
     public LayerMask unwalkableMask; 
     public Vector2 gridWorldSize;
@@ -60,9 +62,6 @@ public class Grid : MonoBehaviour{
     public TerrainType[] walkableRegions;
 
     LayerMask walkableMask;
-
-    // Dictionary speeds up searching for the layer cost, Takes an int ID for the region and returns an int for the movement cost
-    //Dictionary<int, int> walkableRegionsDictionary = new Dictionary<int, int>();
 
     // Dictionary speeds up searching for the layer cost, Takes an int ID for the region and returns a vector of the costs associated with that region
     Dictionary<int, Vector2i> regionsDictionary = new Dictionary<int, Vector2i>();
@@ -120,6 +119,7 @@ public class Grid : MonoBehaviour{
     {
         locationPositions = new List<Vector3>();
 
+        //defines the size of a node
         nodeDiameter = nodeRadius * 2;
 
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
@@ -128,9 +128,13 @@ public class Grid : MonoBehaviour{
 
         //Instantiate locations etc
         SpawnLocations();
+    }
 
 
 
+    void Start()
+    {
+        // Sets the dictionary data for each terrain
         foreach (TerrainType region in walkableRegions)
         {
             // Layers in Unity are stored in a 32bit integer
@@ -138,21 +142,13 @@ public class Grid : MonoBehaviour{
             walkableMask.value |= region.terrainMask.value;
             // This computes the layer cost as from the ie layer 9 would have 2^12 
             // IE ask to what power should 2 be raised in order to equal the terrainMask value 
-            //walkableRegionsDictionary.Add((int)Mathf.Log(region.terrainMask.value, 2), region.terrainCost);
-
             regionsDictionary.Add((int)Mathf.Log(region.terrainMask.value, 2), new Vector2i(region.terrainCost, region.soundCost));
         }
 
-        
-    }
-
-    void Start()
-    {
         CreateGrid();
 
-        // Test nodefromworldpos function
-        //Node myNode = GetNodeFromWorldPos(new Vector3(0.0f, 0.0f, 0.0f));
-        //Debug.Log(myNode);
+
+        windDirection = new Vector3(0.0f, 0.0f, 0.0f);
     }
 
 
@@ -162,6 +158,8 @@ public class Grid : MonoBehaviour{
             isDayTime = false;
 
         else isDayTime = true;
+
+        windDirection[0] = Mathf.Sin(1 * Time.deltaTime);
     }
 
 
@@ -262,6 +260,7 @@ public class Grid : MonoBehaviour{
         {
             for (int y = 0; y < gridSizeY; y++)
             {
+                // Gets the world point for the node
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
 
                 //Set the bool based on the layermask
@@ -281,7 +280,6 @@ public class Grid : MonoBehaviour{
                     if (Physics.Raycast(ray, out hit, 100, walkableMask))
                     {
                         //Debug.Log("Layer" + hit.collider.gameObject.layer);
-                        //walkableRegionsDictionary.TryGetValue(hit.collider.gameObject.layer, out movementCost);
                         regionsDictionary.TryGetValue(hit.collider.gameObject.layer, out costVector);
 
                         movementCost = costVector.moveC;

@@ -139,6 +139,7 @@ public class Elsa : MonoBehaviour
         }
     }
 
+    // Follows the path provided by Astar
     IEnumerator FollowPath()
     {
         if (path != null)

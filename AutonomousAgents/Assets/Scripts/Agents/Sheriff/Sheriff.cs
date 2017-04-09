@@ -52,6 +52,8 @@ public class Sheriff : MonoBehaviour
         //Debug.Log("Sheriff is waking up...");
         this.stateMachine = new StateMachine<Sheriff>();
 
+        Outlaw.OnBankRobbery += handlerBankRobbery;
+
         sleepThreshold = Random.Range(40, 150);
         sightPerceptiveness = 20.0f;
 
@@ -155,24 +157,28 @@ public class Sheriff : MonoBehaviour
 
     #endregion
 
+    #region EVENTS
 
+    public void handlerBankRobbery()
+    {
+        Speak("A Bank Robbery! Deputy go and arrest the thief!");
+    }
+
+    #endregion
 
     #region SENSES 
 
     public void LookAhead()
     {
         RaycastHit[] hits;
-        hits = Physics.RaycastAll(transform.position, transform.forward, 100.0F);
+        hits = Physics.RaycastAll(transform.position, transform.forward, sightPerceptiveness);
 
         foreach (RaycastHit hit in hits)
         {
             if (hits.Length > 0)
             {
-                if (hit.distance <= sightPerceptiveness)
-                {
-                    //calls a sight event to process the seen object
-                    SightEvent(hit);
-                }
+                //calls a sight event to process the seen object
+                SightEvent(hit);
             }
         }
     }
@@ -197,7 +203,7 @@ public class Sheriff : MonoBehaviour
         }
         if (hit.collider.tag == "Undertaker")
         {
-            Speak("I ain't seen you 'round here before!");
+            Speak("Doesn't look like anything to me!");
         }
     }
 
@@ -207,6 +213,11 @@ public class Sheriff : MonoBehaviour
         if (hit.tag == "House")
         {
             Speak("I smell some darn good smelling stew!");
+        }
+
+        if (hit.tag == "OutlawCamp")
+        {
+            Speak("Wheres that smokey smell coming from?");
         }
 
         if (hit.tag == "Jesse")
@@ -221,7 +232,7 @@ public class Sheriff : MonoBehaviour
     //Does a 360 sphere check to inspect a location with the Sheriff's great sense of smell!
     public bool SniffOutLocation()
     {
-        Vector3 windDir = GameObject.Find("Directional Light").GetComponent<SunScript>().windDirection;
+        Vector3 windDir = sheriffGrid.windDirection;
 
         // performs an overlap sphere (sphere center adjusted for current wind) to check a location, if he smells Jesse he'll try shoot him
         Collider[] smellHits = Physics.OverlapSphere(transform.position + windDir, sightPerceptiveness);

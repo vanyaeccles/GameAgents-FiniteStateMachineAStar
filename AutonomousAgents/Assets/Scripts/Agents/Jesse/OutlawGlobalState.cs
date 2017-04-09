@@ -32,7 +32,7 @@ public sealed class OutlawGlobalState : State<Outlaw>
 
     public override void Execute(Outlaw agent)
     {
-        bool thirsty = agent.Thirsty();
+        bool thirsty = agent.isThirsty();
         if (thirsty)
         {
             //Debug.Log("Jesse: What if none of this is really real?");

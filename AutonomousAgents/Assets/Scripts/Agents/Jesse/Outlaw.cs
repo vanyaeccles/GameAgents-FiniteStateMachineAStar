@@ -129,7 +129,7 @@ public class Outlaw : MonoBehaviour
         return full;
     }
 
-    public bool Thirsty()
+    public bool isThirsty()
     {
         bool thirsty = Thirst == 10 ? true : false;
         return thirsty;

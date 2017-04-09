@@ -9,8 +9,9 @@ using System;
 
 public class PathRequestManager : MonoBehaviour
 {
-    
-    Queue<PathRequest> pathRequestQueue = new Queue<PathRequest>(); // The queue of path requests, c# queues are basically a list but can only add to the end or remove from the beginning (First-in,First-out)
+    // The queue of path requests, 
+    //c# queues are basically a list but can only add to the end or remove from the beginning (First-in,First-out)
+    Queue<PathRequest> pathRequestQueue = new Queue<PathRequest>(); 
     PathRequest currentPathRequest;
 
     static PathRequestManager instance;
@@ -21,7 +22,7 @@ public class PathRequestManager : MonoBehaviour
     // Initialises
     void Awake()
     {
-        instance = this;
+        instance = this; //Singleton
         pathfinding = GetComponent<AStarPathfinder>();
     }
 

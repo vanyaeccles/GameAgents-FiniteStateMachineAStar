@@ -133,8 +133,7 @@ public class AStarPathfinder : MonoBehaviour {
                         //add it to open list (if not already there)
                         if (!openSet.Contains(neighbour))
                             openSet.Add(neighbour);
-                        //else //if its already in the openset its value has changed
-                            //openSet.UpdateItem(neighbour);
+
                     }
                 }
 
@@ -219,7 +218,7 @@ public class AStarPathfinder : MonoBehaviour {
 
 
 
-    //Gets the distance between Nodes, returned distance is scaled up by 10 (sqrt(2) is 1.4, hence diagonal is 14 per unit distance)
+    //Gets the 'fancy diagnonal' distance between Nodes, returned distance is scaled up by 10 (sqrt(2) is 1.4, hence diagonal is 14 per unit distance)
     int GetNode2NodeDistance(Node nodeA, Node nodeB)
     {
         int xDistance = Mathf.Abs(nodeA.gridX - nodeB.gridX);

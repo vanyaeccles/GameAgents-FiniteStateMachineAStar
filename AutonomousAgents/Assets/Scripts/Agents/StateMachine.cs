@@ -22,7 +22,6 @@
 	public void Update () {
         if (this.globalState != null) this.globalState.Execute(this.agent);
         if (this.state != null) this.state.Execute(this.agent);
- 
     }
 	
 	public void ChangeState (State<T> nextState) {
